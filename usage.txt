@@ -1,0 +1,18 @@
+Usage: check-node-version [OPTIONS]
+
+Options:
+
+      --node VERSION
+            Check that the current node version matches the given semver
+            version range.
+
+      --npm VERSION
+            Check that the current npm version matches the given semver
+            version range.
+
+      -q, --quiet
+            Don't output anything. Exit with an error code if the node
+            or npm version is not satisfied, otherwise exit with code 0.
+
+      -h, --help
+            Print this message.

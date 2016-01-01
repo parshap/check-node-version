@@ -1,0 +1,34 @@
+{
+  "name": "check-node-version",
+  "version": "0.0.0",
+  "description": "Check installed version of node, npm, and dependencies",
+  "main": "index.js",
+  "bin": {
+    "check-node-version": "bin.js"
+  },
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parshap/check-version.git"
+  },
+  "keywords": [
+    "version",
+    "semver"
+  ],
+  "author": "Parsha Pourkhomami",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/parshap/check-version/issues"
+  },
+  "homepage": "https://github.com/parshap/check-version#readme",
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "run-parallel": "^1.1.4",
+    "semver": "^5.0.3"
+  },
+  "devDependencies": {
+    "tape": "^4.2.2"
+  }
+}
