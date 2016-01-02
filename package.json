@@ -1,7 +1,7 @@
 {
   "name": "check-node-version",
   "version": "1.0.0",
-  "description": "Check installed version of node, npm, and dependencies",
+  "description": "Check installed versions of node and npm",
   "main": "index.js",
   "bin": {
     "check-node-version": "bin.js"
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/parshap/check-version.git"
+    "url": "git+https://github.com/parshap/check-node-version.git"
   },
   "keywords": [
     "version",
@@ -20,9 +20,9 @@
   "author": "Parsha Pourkhomami",
   "license": "WTFPL",
   "bugs": {
-    "url": "https://github.com/parshap/check-version/issues"
+    "url": "https://github.com/parshap/check-node-version/issues"
   },
-  "homepage": "https://github.com/parshap/check-version#readme",
+  "homepage": "https://github.com/parshap/check-node-version#readme",
   "dependencies": {
     "minimist": "^1.2.0",
     "run-parallel": "^1.1.4",

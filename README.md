@@ -1,10 +1,14 @@
 # check-node-version
 
-Check the version of `node` and `npm`.
+Check installed versions of `node` and `npm`.
 
 ## Install
 
-[npm: *check-node-version*][https://www.npmjs.com/package/check-node-version]
+[npm: *check-node-version*](https://www.npmjs.com/package/check-node-version)
+
+```
+npm install check-node-version
+```
 
 ## Command Line Usage
 
@@ -63,6 +67,20 @@ Error: Wanted node version "4" (>=4.0.0 <5.0.0)
 To install node, run `nvm install 4` or check https://nodejs.org/
 $ echo $?
 1
+```
+
+#### Use with `npm test`
+
+```json
+{
+  "name": "my-package",
+  "devDependencies": {
+    "check-node-version": "^1.0.0"
+  },
+  "scripts": {
+    "test": "check-node-version --node '>= 4.2.3' && node my-tests.js"
+  }
+}
 ```
 
 ## API Usage
