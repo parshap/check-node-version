@@ -58,6 +58,26 @@ var options = {
   node: argv.node,
   npm: argv.npm,
 };
+
+if (argv.package) {
+  try {
+    var packageJson = require(path.join(process.cwd(), 'package.json'));
+  } catch (e) {
+    console.log('Error: When running with --package, a package.json file is expected in the current working directory');
+    console.log('Current working directory is: ' + process.cwd());
+    process.exit(1);
+  }
+  if (!packageJson.engines) {
+    console.log('Error: When running with --package, your package.json is expected to contain the "engines" key');
+    console.log('See https://docs.npmjs.com/files/package.json#engines for the supported syntax');
+    process.exit(1);
+  }
+  options = {
+    node: packageJson.engines.node,
+    npm: packageJson.engines.npm,
+  };
+}
+
 check(options, function(err, result) {
   if (err) {
     console.error(err.message);
