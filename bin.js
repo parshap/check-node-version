@@ -80,7 +80,7 @@ if (argv.package) {
 
 check(options, function(err, result) {
   if (err) {
-    console.error(err.message);
+    console.error(err.longMessage || err.message);
     process.exit(1);
     return;
   }
