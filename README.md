@@ -73,6 +73,12 @@ $ echo $?
 1
 ```
 
+#### Use with a `.nvmrc` file
+
+```
+$ check-node-version --node $(cat .nvmrc) --npm 2.14
+```
+
 #### Use with `npm test`
 
 ```json
@@ -90,4 +96,4 @@ $ echo $?
 ## API Usage
 
 This module can also be used programmatically from node. See `index.js`
-and `test.js` for more information.n
+and `test.js` for more information.
