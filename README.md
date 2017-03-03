@@ -34,6 +34,10 @@ OPTIONS
             Check that the current npm version matches the given semver
             version range.
 
+      --yarn VERSION
+            Check that the current yarn version matches the given semver
+            version range.
+
       --package
             Use the "engines" key in the current package.json for the
             semver version ranges.

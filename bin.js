@@ -9,6 +9,7 @@ var path = require("path");
 function logResult(result) {
   console.log("node:", "v" + result.node.version);
   console.log("npm:", "v" + result.npm.version);
+  console.log("yarn:", "v" + result.yarn.version);
   if ( ! result.nodeSatisfied) {
     console.log([
       "Error: Wanted node version ",
@@ -32,6 +33,17 @@ function logResult(result) {
   }
   if ( ! result.npmSatisfied) {
     console.log("To install npm, run `npm install -g npm@" + result.npmWanted.raw + "`");
+  }
+  if ( ! result.yarnSatisfied) {
+    console.log([
+      "Error: Wanted yarn version ",
+      JSON.stringify(result.yarnWanted.raw),
+      " (" + result.yarnWanted.range + ")",
+    ].join(""));
+    console.log([
+      "To install yarn, ",
+      "check https://yarnpkg.com/lang/en/docs/install/",
+    ].join(""));
   }
 }
 
@@ -57,6 +69,7 @@ if (argv.help) {
 var options = {
   node: argv.node,
   npm: argv.npm,
+  yarn: argv.yarn,
 };
 
 if (argv.package) {
@@ -75,6 +88,7 @@ if (argv.package) {
   options = {
     node: packageJson.engines.node,
     npm: packageJson.engines.npm,
+    yarn: packageJson.engines.yarn,
   };
 }
 
@@ -87,6 +101,6 @@ check(options, function(err, result) {
   if ( ! argv.quiet) {
     logResult(result);
   }
-  var isSatisfied = result.nodeSatisfied && result.npmSatisfied;
+  var isSatisfied = result.nodeSatisfied && result.npmSatisfied && result.yarnSatisfied;
   process.exit(isSatisfied ? 0 : 1);
 });

@@ -12,6 +12,9 @@ test("simple call", function(t) {
     t.ok(result.npm);
     t.ok(result.npmWanted);
     t.ok(result.npmSatisfied);
+    t.ok(result.yarn);
+    t.ok(result.yarnWanted);
+    t.ok(result.yarnSatisfied);
     t.end();
   });
 });

@@ -24,6 +24,7 @@ function normalizeWanted(wanted) {
   return {
     node: wanted.node != null ? String(wanted.node) : "",
     npm: wanted.npm != null ? String(wanted.npm) : "",
+    yarn: wanted.yarn != null ? String(wanted.yarn) : "",
   };
 }
 
@@ -37,6 +38,7 @@ module.exports = function(wanted, callback) {
   parallel({
     node: runVersionCommand.bind(null, "node --version"),
     npm: runVersionCommand.bind(null, "npm --version"),
+    yarn: runVersionCommand.bind(null, "yarn --version"),
   }, function(err, versions) {
     if (err) {
       callback(err);
@@ -49,6 +51,9 @@ module.exports = function(wanted, callback) {
         npm: semver(versions.npm),
         npmWanted: new semver.Range(wanted.npm),
         npmSatisfied: semver.satisfies(versions.npm, wanted.npm),
+        yarn: semver(versions.yarn),
+        yarnWanted: new semver.Range(wanted.yarn),
+        yarnSatisfied: semver.satisfies(versions.yarn, wanted.yarn),
       });
     }
   });
