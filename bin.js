@@ -6,13 +6,16 @@ var check = require("./");
 var fs = require("fs");
 var path = require("path");
 var config = require("./config");
+var constants = require("./constants");
 
 var names = Object.keys(config);
 
 function logResult(result) {
   // report installed versions
   names.forEach(function(name) {
-    console.log(name + ": v" + result[name].version);
+    var version = result[name] === constants.notInstalled ?
+      result[name] : "v" + result[name].version;
+    console.log(name + ": " + version);
   });
 
   // display any non-compliant versions
