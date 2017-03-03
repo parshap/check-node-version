@@ -10,40 +10,37 @@ function logResult(result) {
   console.log("node:", "v" + result.node.version);
   console.log("npm:", "v" + result.npm.version);
   console.log("yarn:", "v" + result.yarn.version);
+
   if ( ! result.nodeSatisfied) {
     console.log([
       "Error: Wanted node version ",
       JSON.stringify(result.nodeWanted.raw),
       " (" + result.nodeWanted.range + ")",
     ].join(""));
-  }
-  if ( ! result.npmSatisfied) {
-    console.log([
-      "Error: Wanted npm version ",
-      JSON.stringify(result.npmWanted.raw),
-      " (" + result.npmWanted.range + ")",
-    ].join(""));
-  }
-  if ( ! result.nodeSatisfied) {
     console.log([
       "To install node, run ",
       "`nvm install " + result.nodeWanted.raw + "`",
       " or check https://nodejs.org/",
     ].join(""));
   }
+
   if ( ! result.npmSatisfied) {
+    console.log([
+      "Error: Wanted npm version ",
+      JSON.stringify(result.npmWanted.raw),
+      " (" + result.npmWanted.range + ")",
+    ].join(""));
+
     console.log("To install npm, run `npm install -g npm@" + result.npmWanted.raw + "`");
   }
+
   if ( ! result.yarnSatisfied) {
     console.log([
       "Error: Wanted yarn version ",
       JSON.stringify(result.yarnWanted.raw),
       " (" + result.yarnWanted.range + ")",
     ].join(""));
-    console.log([
-      "To install yarn, ",
-      "check https://yarnpkg.com/lang/en/docs/install/",
-    ].join(""));
+    console.log("To install yarn, check https://yarnpkg.com/lang/en/docs/install/");
   }
 }
 
