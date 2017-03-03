@@ -69,6 +69,13 @@ module.exports = function check(wanted, callback) {
         return memo;
       }, {});
 
+      response.isSatisfied = names.reduce(function(memo, name) {
+        if (response[name + "Satisfied"]) {
+          return memo;
+        }
+        return false;
+      }, true);
+
       callback(null, response);
     }
   });

@@ -29,6 +29,7 @@
     "semver": "^5.0.3"
   },
   "devDependencies": {
+    "nock-exec": "^0.1.0",
     "tape": "^4.2.2"
   }
 }

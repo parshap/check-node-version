@@ -84,11 +84,5 @@ check(options, function(err, result) {
   if ( ! argv.quiet) {
     logResult(result);
   }
-  isSatisfied = names.reduce(function(memo, name) {
-    if (result[name + "Satisfied"]) {
-      return memo;
-    }
-    return false;
-  }, true);
-  process.exit(isSatisfied ? 0 : 1);
+  process.exit(result.isSatisfied ? 0 : 1);
 });
