@@ -3,6 +3,9 @@
 var exec = require("child_process").exec;
 var semver = require("semver");
 var parallel = require("run-parallel");
+var config = require("./config");
+
+var names = Object.keys(config);
 
 function runVersionCommand(command, callback) {
   exec(command, function(err, stdin, stderr) {
@@ -19,42 +22,44 @@ function runVersionCommand(command, callback) {
   });
 }
 
-function normalizeWanted(wanted) {
-  wanted = wanted || {};
-  return {
-    node: wanted.node != null ? String(wanted.node) : "",
-    npm: wanted.npm != null ? String(wanted.npm) : "",
-    yarn: wanted.yarn != null ? String(wanted.yarn) : "",
-  };
+function normalizeWanted(w) {
+  var wanted = w || {};
+
+  return names.reduce(function(memo, name) {
+    memo[name] = wanted[name] != null ? String(wanted[name]) : "";
+    return memo;
+  }, {});
 }
 
 module.exports = function(wanted, callback) {
+  var commands;
+
   if (typeof wanted === "function") {
     callback = wanted;
     wanted = null;
   }
   wanted = normalizeWanted(wanted);
 
-  parallel({
-    node: runVersionCommand.bind(null, "node --version"),
-    npm: runVersionCommand.bind(null, "npm --version"),
-    yarn: runVersionCommand.bind(null, "yarn --version"),
-  }, function(err, versions) {
+  commands = names.reduce(function(memo, name) {
+    memo[name] = runVersionCommand.bind(null, config[name].versionCommand);
+    return memo;
+  }, {});
+
+
+  parallel(commands, function(err, versions) {
     if (err) {
       callback(err);
     }
     else {
-      callback(null, {
-        node: semver(versions.node),
-        nodeWanted: new semver.Range(wanted.node),
-        nodeSatisfied: semver.satisfies(versions.node, wanted.node),
-        npm: semver(versions.npm),
-        npmWanted: new semver.Range(wanted.npm),
-        npmSatisfied: semver.satisfies(versions.npm, wanted.npm),
-        yarn: semver(versions.yarn),
-        yarnWanted: new semver.Range(wanted.yarn),
-        yarnSatisfied: semver.satisfies(versions.yarn, wanted.yarn),
-      });
+      var response = names.reduce(function(memo, name) {
+        memo[name] = semver(versions[name]);
+        memo[name + "Wanted"] = new semver.Range(wanted[name]);
+        memo[name + "Satisfied"] = semver.satisfies(versions[name], wanted[name]);
+
+        return memo;
+      }, {});
+
+      callback(null, response);
     }
   });
 };

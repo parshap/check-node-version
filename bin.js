@@ -5,43 +5,27 @@ var minimist = require("minimist");
 var check = require("./");
 var fs = require("fs");
 var path = require("path");
+var config = require("./config");
+
+var names = Object.keys(config);
 
 function logResult(result) {
-  console.log("node:", "v" + result.node.version);
-  console.log("npm:", "v" + result.npm.version);
-  console.log("yarn:", "v" + result.yarn.version);
+  // report installed versions
+  names.forEach(function(name) {
+    console.log(name + ": v" + result[name].version);
+  });
 
-  if ( ! result.nodeSatisfied) {
-    console.log([
-      "Error: Wanted node version ",
-      JSON.stringify(result.nodeWanted.raw),
-      " (" + result.nodeWanted.range + ")",
-    ].join(""));
-    console.log([
-      "To install node, run ",
-      "`nvm install " + result.nodeWanted.raw + "`",
-      " or check https://nodejs.org/",
-    ].join(""));
-  }
+  // display any non-compliant versions
+  names.forEach(function(name) {
+    var has = result[name + "Satisfied"];
+    var raw = result[name + "Wanted"].raw;
+    var range = result[name + "Wanted"].range;
 
-  if ( ! result.npmSatisfied) {
-    console.log([
-      "Error: Wanted npm version ",
-      JSON.stringify(result.npmWanted.raw),
-      " (" + result.npmWanted.range + ")",
-    ].join(""));
-
-    console.log("To install npm, run `npm install -g npm@" + result.npmWanted.raw + "`");
-  }
-
-  if ( ! result.yarnSatisfied) {
-    console.log([
-      "Error: Wanted yarn version ",
-      JSON.stringify(result.yarnWanted.raw),
-      " (" + result.yarnWanted.range + ")",
-    ].join(""));
-    console.log("To install yarn, check https://yarnpkg.com/lang/en/docs/install/");
-  }
+    if (!has) {
+      console.log("Error: Wanted " + name + " version " + raw + " (" + range +")");
+      console.log(config[name].getInstallInstructions(raw));
+    }
+  });
 }
 
 var argv = minimist(process.argv.slice(2), {
@@ -63,11 +47,10 @@ if (argv.help) {
   process.exit(0);
 }
 
-var options = {
-  node: argv.node,
-  npm: argv.npm,
-  yarn: argv.yarn,
-};
+var options = names.reduce(function(memo, name) {
+  memo[name] = argv[name];
+  return memo;
+}, {});
 
 if (argv.package) {
   try {
@@ -82,14 +65,14 @@ if (argv.package) {
     console.log('See https://docs.npmjs.com/files/package.json#engines for the supported syntax');
     process.exit(1);
   }
-  options = {
-    node: packageJson.engines.node,
-    npm: packageJson.engines.npm,
-    yarn: packageJson.engines.yarn,
-  };
+  options = names.reduce(function(memo, name) {
+    memo[name] = packageJson.engines[name];
+    return memo;
+  }, {});
 }
 
 check(options, function(err, result) {
+  var isSatisfied;
   if (err) {
     console.error(err.longMessage || err.message);
     process.exit(1);
@@ -98,6 +81,11 @@ check(options, function(err, result) {
   if ( ! argv.quiet) {
     logResult(result);
   }
-  var isSatisfied = result.nodeSatisfied && result.npmSatisfied && result.yarnSatisfied;
+  isSatisfied = names.reduce(function(memo, name) {
+    if (result[name + "Satisfied"]) {
+      return memo;
+    }
+    return false;
+  }, true);
   process.exit(isSatisfied ? 0 : 1);
 });

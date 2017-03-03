@@ -1,6 +1,6 @@
 # check-node-version
 
-Check installed versions of `node` and `npm`.
+Check installed versions of `node`, `npm`, and `yarn`.
 
 ## Install
 
@@ -17,7 +17,7 @@ SYNOPSIS
       check-node-version [OPTIONS]
 
 DESCRIPTION
-      check-node-version will check if the current node and npm versions
+      check-node-version will check if the current node, npm and yarn versions
       match the given semver version ranges.
 
       If the given version is not satisfied, information about
@@ -43,8 +43,8 @@ OPTIONS
             semver version ranges.
 
       -q, --quiet
-            Don't output anything. Exit with an error code if the node
-            or npm version is not satisfied, otherwise exit with code 0.
+            Don't output anything. Exit with an error code if the
+            version is not satisfied, otherwise exit with code 0.
 
       -h, --help
             Print a usage message.
@@ -54,13 +54,14 @@ OPTIONS
 
 #### Get installed versions
 
-When no versions are given, the current node and npm versions are
+When no versions are given, the current node, npm, and yarn versions are
 printed out.
 
 ```
 $ check-node-version
 node: v0.12.7
 npm: v2.14.10
+yarn: v0.21.03
 $ echo $?
 0
 ```
