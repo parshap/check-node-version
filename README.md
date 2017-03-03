@@ -61,7 +61,7 @@ printed out.
 $ check-node-version
 node: v0.12.7
 npm: v2.14.10
-yarn: v0.21.03
+yarn: v0.21.3
 $ echo $?
 0
 ```
@@ -72,6 +72,20 @@ $ echo $?
 $ check-node-version --node 4 --npm 2.14
 node: v0.12.7
 npm: v2.14.10
+yarn: v0.21.3
+Error: Wanted node version "4" (>=4.0.0 <5.0.0)
+To install node, run `nvm install 4` or check https://nodejs.org/
+$ echo $?
+1
+```
+
+#### Check for `node@4` and `npm@2.14`, `yarn` not installed
+
+```
+$ check-node-version --node 4 --npm 2.14
+node: v0.12.7
+npm: v2.14.10
+yarn: not installed
 Error: Wanted node version "4" (>=4.0.0 <5.0.0)
 To install node, run `nvm install 4` or check https://nodejs.org/
 $ echo $?
