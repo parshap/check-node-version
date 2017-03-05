@@ -16,10 +16,16 @@ function runVersionCommand(name, command, callback) {
         return callback(null, constants.notInstalled);
       }
 
-      var err = new Error("Command failed: " + commandDescription);
-      err.longMessage = err.message + (stderr && ("\n" + stderr.trim()));
-      err.execError = err;
-      return callback(err);
+      var runError = new Error("Command failed: " + commandDescription);
+      runError.longMessage = runError.message;
+      if (stderr) {
+        runError.longMessage += "\n" + stderr.trim();
+      }
+      if (err) {
+        runError.longMessage += "\n" + err.message;
+      }
+      runError.execError = err;
+      return callback(runError);
     }
     else {
       return callback(null, stdin.toString().trim());
