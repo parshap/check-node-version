@@ -1,23 +1,36 @@
 "use strict";
 
 var test = require("tape");
-var nockExec = require("nock-exec");
 var check = require("./");
-var config = require("./config");
-var constants = require("./constants");
+
+function getMockedGetVersionsOptions(versions) {
+  return {
+    getVersion: function(name, callback) {
+      process.nextTick(function() {
+        if (versions[name] instanceof Error) {
+          callback(null, {
+            error: versions[name],
+          });
+        }
+        else {
+          callback(null, {
+            version: versions[name],
+          });
+        }
+      });
+    },
+  };
+}
 
 test("simple call", function(t) {
   check(function(err, result) {
     t.ifError(err);
     t.ok(result.node);
-    t.ok(result.nodeWanted);
-    t.ok(result.nodeSatisfied);
+    t.ok(result.node.version);
     t.ok(result.npm);
-    t.ok(result.npmWanted);
-    t.ok(result.npmSatisfied);
+    t.ok(result.npm.version);
     t.ok(result.yarn);
-    t.ok(result.yarnWanted);
-    t.ok(result.yarnSatisfied);
+    t.ok(result.yarn.version);
     t.ok(result.isSatisfied);
     t.end();
   });
@@ -25,16 +38,19 @@ test("simple call", function(t) {
 
 test("positive node result", function(t) {
   var version = "7.0.0";
-  nockExec(config.node.versionCommand).reply(0, version);
-  nockExec(config.npm.versionCommand).reply(0, "2.0.0");
-  nockExec(config.yarn.versionCommand).reply(0, "1.0.0");
-
-  check({ node: version }, function(err, result) {
+  var wanted = {
+    node: version,
+  };
+  var options = getMockedGetVersionsOptions({
+    node: version,
+  });
+  check(wanted, options, function(err, result) {
     t.ifError(err);
     t.ok(result.node);
-    t.equal(result.node.raw, version);
-    t.equal(result.nodeWanted.range, version);
-    t.equal(result.nodeSatisfied, true);
+    t.ok(result.node.version);
+    t.equal(result.node.version.raw, version);
+    t.equal(result.node.wanted.range, version);
+    t.equal(result.node.isSatisfied, true);
     t.equal(result.isSatisfied, true);
     t.end();
   });
@@ -42,16 +58,18 @@ test("positive node result", function(t) {
 
 test("negative node result", function(t) {
   var version = "7.0.0";
-  nockExec(config.node.versionCommand).reply(0, version);
-  nockExec(config.npm.versionCommand).reply(0, "2.0.0");
-  nockExec(config.yarn.versionCommand).reply(0, "1.0.0");
-
-  check({ node: "6.9.9" }, function(err, result) {
+  var wanted = {
+    node: "6.9.9",
+  };
+  var options = getMockedGetVersionsOptions({
+    node: version,
+  });
+  check(wanted, options, function(err, result) {
     t.ifError(err);
     t.ok(result.node);
-    t.equal(result.node.raw, version);
-    t.equal(result.nodeWanted.range, "6.9.9");
-    t.equal(result.nodeSatisfied, false);
+    t.equal(result.node.version.raw, version);
+    t.equal(result.node.wanted.range, "6.9.9");
+    t.equal(result.node.isSatisfied, false);
     t.equal(result.isSatisfied, false);
     t.end();
   });
@@ -59,51 +77,62 @@ test("negative node result", function(t) {
 
 test("positive node result, yarn not installed", function(t) {
   var version = "7.0.0";
-  nockExec(config.node.versionCommand).reply(0, version);
-  nockExec(config.npm.versionCommand).reply(0, "2.0.0");
-  nockExec(config.yarn.versionCommand).err("Command failed: yarn --version");
-
-  check({ node: version }, function(err, result) {
+  var wanted = {
+    node: version,
+  };
+  var options = getMockedGetVersionsOptions({
+    node: version,
+    yarn: new Error("Command failed: yarn --version"),
+  });
+  check(wanted, options, function(err, result) {
     t.ifError(err);
     t.ok(result.node);
-    t.equal(result.node.raw, version);
-    t.equal(result.nodeWanted.range, version);
-    t.equal(result.nodeSatisfied, true);
-    t.equal(result.yarn, constants.notInstalled);
+    t.equal(result.node.version.raw, version);
+    t.equal(result.node.wanted.range, version);
+    t.equal(result.node.isSatisfied, true);
     t.equal(result.isSatisfied, true);
+    t.equal(result.yarn.version, undefined);
+    t.ok(result.yarn.error);
     t.end();
   });
 });
 
 test("negative node result, yarn not installed", function(t) {
-  var version = "7.0.0";
-  nockExec(config.node.versionCommand).reply(0, version);
-  nockExec(config.npm.versionCommand).reply(0, "2.0.0");
-  nockExec(config.yarn.versionCommand).err("Command failed: yarn --version");
-
-  check({ node: "6.9.9" }, function(err, result) {
+  var wanted = {
+    node: "6.9.9",
+  };
+  var options = getMockedGetVersionsOptions({
+    node: "7.0.0",
+    npm: "2.0.0",
+    yarn: new Error("Command failed: yarn --version"),
+  });
+  check(wanted, options, function(err, result) {
     t.ifError(err);
     t.ok(result.node);
-    t.equal(result.node.raw, version);
-    t.equal(result.nodeWanted.range, "6.9.9");
-    t.equal(result.nodeSatisfied, false);
-    t.equal(result.yarn, constants.notInstalled);
+    t.equal(result.node.version.raw, "7.0.0");
+    t.equal(result.node.wanted.range, "6.9.9");
+    t.equal(result.node.isSatisfied, false);
+    t.equal(result.yarn.version, undefined);
+    t.ok(result.yarn.error);
     t.equal(result.isSatisfied, false);
     t.end();
   });
 });
 
 test("negative yarn result, yarn not installed", function(t) {
-  nockExec(config.node.versionCommand).reply(0, "7.0.0");
-  nockExec(config.npm.versionCommand).reply(0, "2.0.0");
-  nockExec(config.yarn.versionCommand).err("Command failed: yarn --version");
-
-  check({ yarn: "1.1.1" }, function(err, result) {
+  var wanted = {
+    yarn: "1.1.1",
+  };
+  var options = getMockedGetVersionsOptions({
+    node: "7.0.0",
+    npm: "2.0.0",
+    yarn: new Error("Command failed: yarn --version"),
+  });
+  check(wanted, options, function(err, result) {
     t.ifError(err);
-    t.equal(result.yarn, constants.notInstalled);
-    t.equal(result.yarnWanted.range, "1.1.1");
+    t.equal(result.yarn.version, undefined);
+    t.equal(result.yarn.wanted.range, "1.1.1");
     t.equal(result.isSatisfied, false);
     t.end();
   });
 });
-

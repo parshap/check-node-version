@@ -3,19 +3,35 @@
 var exec = require("child_process").exec;
 var semver = require("semver");
 var parallel = require("run-parallel");
-var config = require("./config");
-var constants = require("./constants");
+var mapValues = require("map-values");
+var filterObject = require("object-filter");
 
-var names = Object.keys(config);
+var PROGRAMS = {
+  node: {
+    getVersion: runVersionCommand.bind(null, "node --version"),
+    getInstallInstructions: function(v) {
+      return "To install node, run `nvm install " + v +
+        "` or see https://nodejs.org/";
+    }
+  },
+  npm: {
+    getVersion: runVersionCommand.bind(null, "npm --version"),
+    getInstallInstructions: function(v) {
+      return "To install npm, run `npm install -g npm@" + v + "`";
+    }
+  },
+  yarn: {
+    getVersion: runVersionCommand.bind(null, "yarn --version"),
+    getInstallInstructions: function(v) {
+      return "To install yarn, see https://yarnpkg.com/lang/en/docs/install/";
+    }
+  },
+};
 
-function runVersionCommand(name, command, callback) {
+function runVersionCommand(command, callback) {
   exec(command, function(err, stdin, stderr) {
     var commandDescription = JSON.stringify(command);
     if (err || stderr) {
-      if (config[name].optional) {
-        return callback(null, constants.notInstalled);
-      }
-
       var runError = new Error("Command failed: " + commandDescription);
       runError.longMessage = runError.message;
       if (stderr) {
@@ -25,64 +41,91 @@ function runVersionCommand(name, command, callback) {
         runError.longMessage += "\n" + err.message;
       }
       runError.execError = err;
-      return callback(runError);
+      return callback(null, {
+        error: runError,
+      });
     }
     else {
-      return callback(null, stdin.toString().trim());
+      return callback(null, {
+        version: stdin.toString().trim(),
+      });
     }
   });
 }
 
-function normalizeWanted(w) {
-  var wanted = w || {};
-
-  return names.reduce(function(memo, name) {
-    memo[name] = wanted[name] != null ? String(wanted[name]) : "";
-    return memo;
-  }, {});
+// Return object containing only keys that a program exists for and
+// something valid was given.
+function normalizeWanted(wanted) {
+  wanted = wanted || {};
+  // Validate keys
+  wanted = filterObject(wanted, Boolean);
+  // Normalize to strings
+  wanted = mapValues(wanted, String);
+  // Filter existing programs
+  wanted = filterObject(wanted, function(version, key) {
+    return PROGRAMS[key];
+  });
+  return wanted;
 }
 
-module.exports = function check(wanted, callback) {
-  var commands;
+function normalizeOptions(options) {
+  return Object.assign({
+    getVersion: defaultGetVersion,
+  }, options);
+}
 
+function defaultGetVersion(name, callback) {
+  PROGRAMS[name].getVersion(callback);
+}
+
+module.exports = function check(wanted, options, callback) {
+  // Normalize arguments
   if (typeof wanted === "function") {
     callback = wanted;
     wanted = null;
   }
+  if (typeof options === "function") {
+    callback = options;
+    options = null;
+  }
   wanted = normalizeWanted(wanted);
+  options = normalizeOptions(options);
 
-  commands = names.reduce(function(memo, name) {
-    memo[name] = runVersionCommand.bind(null, name, config[name].versionCommand);
-    return memo;
-  }, {});
-
-
+  var commands = mapValues(PROGRAMS, function(program, name) {
+    return options.getVersion.bind(null, name);
+  });
   parallel(commands, function(err, versions) {
     if (err) {
-      console.log("got an error: ", err);
       callback(err);
     }
     else {
-      var response = names.reduce(function(memo, name) {
-        var notInstalled = versions[name] === constants.notInstalled;
-        var version = notInstalled ? versions[name] : semver(versions[name]);
-
-        memo[name] = version;
-        memo[name + "Wanted"] = new semver.Range(wanted[name]);
-        memo[name + "Satisfied"] = config[name].optional && !wanted[name] ||
-          !notInstalled && semver.satisfies(versions[name], wanted[name]);
-
-        return memo;
+      var retval = mapValues(PROGRAMS, function(program, name) {
+        var name = name;
+        var programInfo = {};
+        if (versions[name].error) {
+          programInfo.error = versions[name].error;
+        }
+        if (versions[name].version) {
+          programInfo.version = semver(versions[name].version);
+        }
+        if (wanted[name]) {
+          programInfo.wanted = new semver.Range(wanted[name]);
+          programInfo.isSatisfied = programInfo.version && semver.satisfies(
+            programInfo.version,
+            programInfo.wanted
+          ) || false;
+        }
+        return programInfo;
       }, {});
-
-      response.isSatisfied = names.reduce(function(memo, name) {
-        if (response[name + "Satisfied"]) {
+      retval.isSatisfied = Object.keys(wanted).reduce(function(memo, name) {
+        if (retval[name].isSatisfied !== false) {
           return memo;
         }
         return false;
       }, true);
-
-      callback(null, response);
+      callback(null, retval);
     }
   });
 };
+
+module.exports.PROGRAMS = PROGRAMS;

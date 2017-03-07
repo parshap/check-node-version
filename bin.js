@@ -3,30 +3,26 @@
 
 var minimist = require("minimist");
 var check = require("./");
+var PROGRAMS = require("./").PROGRAMS;
 var fs = require("fs");
 var path = require("path");
-var config = require("./config");
-var constants = require("./constants");
-
-var names = Object.keys(config);
 
 function logResult(result) {
   // report installed versions
-  names.forEach(function(name) {
-    var version = result[name] === constants.notInstalled ?
-      result[name] : "v" + result[name].version;
-    console.log(name + ": " + version);
+  Object.keys(PROGRAMS).forEach(function(name) {
+    var info = result[name];
+    if (info.version) {
+      console.log(name + ": " + info.version);
+    }
   });
 
   // display any non-compliant versions
-  names.forEach(function(name) {
-    var has = result[name + "Satisfied"];
-    var raw = result[name + "Wanted"].raw;
-    var range = result[name + "Wanted"].range;
-
-    if (!has) {
+  Object.keys(PROGRAMS).forEach(function(name) {
+    if (result[name].isSatisfied === false) {
+      var raw = result[name].wanted.raw;
+      var range = result[name].wanted.range;
       console.log("Error: Wanted " + name + " version " + raw + " (" + range +")");
-      console.log(config[name].getInstallInstructions(raw));
+      console.log(PROGRAMS[name].getInstallInstructions(raw));
     }
   });
 }
@@ -50,7 +46,7 @@ if (argv.help) {
   process.exit(0);
 }
 
-var options = names.reduce(function(memo, name) {
+var options = Object.keys(PROGRAMS).reduce(function(memo, name) {
   memo[name] = argv[name];
   return memo;
 }, {});
@@ -68,14 +64,13 @@ if (argv.package) {
     console.log('See https://docs.npmjs.com/files/package.json#engines for the supported syntax');
     process.exit(1);
   }
-  options = names.reduce(function(memo, name) {
+  options = Object.keys(PROGRAMS).reduce(function(memo, name) {
     memo[name] = packageJson.engines[name];
     return memo;
   }, {});
 }
 
 check(options, function(err, result) {
-  var isSatisfied;
   if (err) {
     console.error(err.longMessage || err.message);
     process.exit(1);
