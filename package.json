@@ -1,6 +1,6 @@
 {
   "name": "check-node-version",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "Check installed versions of node and npm",
   "main": "index.js",
   "bin": {
