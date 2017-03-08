@@ -29,18 +29,16 @@ var PROGRAMS = {
 };
 
 function runVersionCommand(command, callback) {
-  exec(command, function(err, stdin, stderr) {
+  exec(command, function(execError, stdin, stderr) {
     var commandDescription = JSON.stringify(command);
-    if (err || stderr) {
+    if (execError || stderr) {
       var runError = new Error("Command failed: " + commandDescription);
-      runError.longMessage = runError.message;
       if (stderr) {
-        runError.longMessage += "\n" + stderr.trim();
+        runError.stderr = stderr.trim();
       }
-      if (err) {
-        runError.longMessage += "\n" + err.message;
+      if (execError) {
+        runError.execError = execError;
       }
-      runError.execError = err;
       return callback(null, {
         error: runError,
       });

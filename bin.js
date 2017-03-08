@@ -7,12 +7,27 @@ var PROGRAMS = require("./").PROGRAMS;
 var fs = require("fs");
 var path = require("path");
 
+function logVersionError(err) {
+  if (err.stderr) {
+    console.error(err.stderr);
+  }
+  else if (err.execError) {
+    console.error(err.execError.message);
+  }
+  else {
+    console.error(err.message);
+  }
+}
+
 function logResult(result) {
   // report installed versions
   Object.keys(PROGRAMS).forEach(function(name) {
     var info = result[name];
     if (info.version) {
       console.log(name + ": " + info.version);
+    }
+    if (info.error) {
+      logVersionError(info.error);
     }
   });
 
@@ -72,7 +87,7 @@ if (argv.package) {
 
 check(options, function(err, result) {
   if (err) {
-    console.error(err.longMessage || err.message);
+    console.error(err.message);
     process.exit(1);
     return;
   }
