@@ -17,8 +17,8 @@ SYNOPSIS
       check-node-version [OPTIONS]
 
 DESCRIPTION
-      check-node-version will check if the current node, npm and yarn versions
-      match the given semver version ranges.
+      check-node-version will check if the current node, npm and yarn
+      versions match the given semver version ranges.
 
       If the given version is not satisfied, information about
       installing the needed version is printed and the program exits
@@ -43,11 +43,11 @@ OPTIONS
             semver version ranges.
 
       -q, --quiet
-            Don't output anything. Exit with an error code if the
-            version is not satisfied, otherwise exit with code 0.
+            Don't output anything. Exit with an error code if a version
+            is not satisfied, otherwise exit with code 0.
 
       -h, --help
-            Print a usage message.
+            Print this message.
 ```
 
 ### Examples
