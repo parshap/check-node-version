@@ -5,6 +5,7 @@ var semver = require("semver");
 var parallel = require("run-parallel");
 var mapValues = require("map-values");
 var filterObject = require("object-filter");
+var assign = require("object.assign");
 
 var PROGRAMS = {
   node: {
@@ -67,7 +68,7 @@ function normalizeWanted(wanted) {
 }
 
 function normalizeOptions(options) {
-  return Object.assign({
+  return assign({
     getVersion: defaultGetVersion,
   }, options);
 }
