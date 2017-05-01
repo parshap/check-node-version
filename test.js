@@ -30,7 +30,6 @@ test("simple call", function(t) {
     t.ok(result.npm);
     t.ok(result.npm.version);
     t.ok(result.yarn);
-    t.ok(result.yarn.version);
     t.ok(result.isSatisfied);
     t.end();
   });
