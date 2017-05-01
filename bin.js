@@ -7,7 +7,7 @@ var PROGRAMS = require("./").PROGRAMS;
 var fs = require("fs");
 var path = require("path");
 
-function logVersionError(err) {
+function logVersionError(name, err) {
   if (err.stderr) {
     console.error(err.stderr);
   }
@@ -26,8 +26,11 @@ function logResult(result) {
     if (info.version) {
       console.log(name + ": " + info.version);
     }
+    if (info.notfound) {
+      console.error(name + ': not installed');
+    }
     if (info.error) {
-      logVersionError(info.error);
+      logVersionError(name, info.error);
     }
   });
 

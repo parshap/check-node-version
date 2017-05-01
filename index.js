@@ -32,7 +32,12 @@ var PROGRAMS = {
 function runVersionCommand(command, callback) {
   exec(command, function(execError, stdin, stderr) {
     var commandDescription = JSON.stringify(command);
-    if (execError || stderr) {
+    if (execError && execError.code === 127) {
+      return callback(null, {
+        notfound: true,
+      });
+    }
+    else if (execError || stderr) {
       var runError = new Error("Command failed: " + commandDescription);
       if (stderr) {
         runError.stderr = stderr.trim();
@@ -106,6 +111,9 @@ module.exports = function check(wanted, options, callback) {
         }
         if (versions[name].version) {
           programInfo.version = semver(versions[name].version);
+        }
+        if (versions[name].notfound) {
+          programInfo.notfound = versions[name].notfound;
         }
         if (wanted[name]) {
           programInfo.wanted = new semver.Range(wanted[name]);
