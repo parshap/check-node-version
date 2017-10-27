@@ -19,20 +19,22 @@ function logVersionError(name, err) {
   }
 }
 
-function logResult(result) {
-  // report installed versions
-  Object.keys(PROGRAMS).forEach(function(name) {
-    var info = result[name];
-    if (info.version) {
-      console.log(name + ": " + info.version);
-    }
-    if (info.notfound) {
-      console.error(name + ': not installed');
-    }
-    if (info.error) {
-      logVersionError(name, info.error);
-    }
-  });
+function logResult(result, quiet) {
+  if (!quiet) {
+    // report installed versions
+    Object.keys(PROGRAMS).forEach(function(name) {
+      var info = result[name];
+      if (info.version) {
+        console.log(name + ": " + info.version);
+      }
+      if (info.notfound) {
+        console.error(name + ': not installed');
+      }
+      if (info.error) {
+        logVersionError(name, info.error);
+      }
+    });
+  }
 
   // display any non-compliant versions
   Object.keys(PROGRAMS).forEach(function(name) {
@@ -94,8 +96,6 @@ check(options, function(err, result) {
     process.exit(1);
     return;
   }
-  if ( ! argv.quiet) {
-    logResult(result);
-  }
+  logResult(result, argv.quiet);
   process.exit(result.isSatisfied ? 0 : 1);
 });
