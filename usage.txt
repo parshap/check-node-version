@@ -18,9 +18,8 @@ Options:
             Use the "engines" key in the current package.json for the
             semver version ranges.
 
-      -q, --quiet
-            Don't output anything. Exit with an error code if a version
-            is not satisfied, otherwise exit with code 0.
+      -p, --print
+            Print installed versions.
 
       -h, --help
             Print this message.

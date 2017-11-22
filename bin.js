@@ -19,26 +19,27 @@ function logVersionError(name, err) {
   }
 }
 
-function logResult(result, quiet) {
-  if (!quiet) {
-    // report installed versions
-    Object.keys(PROGRAMS).forEach(function(name) {
-      var info = result[name];
-      if (info.version) {
-        console.log(name + ": " + info.version);
-      }
-      if (info.notfound) {
-        console.error(name + ': not installed');
-      }
-      if (info.error) {
-        logVersionError(name, info.error);
-      }
-    });
+function printInstalledVersion(name, info) {
+  if (info.version) {
+    console.log(name + ": " + info.version);
   }
+  if (info.notfound) {
+    console.error(name + ': not installed');
+  }
+  if (info.error) {
+    logVersionError(name, info.error);
+  }
+}
 
-  // display any non-compliant versions
+function printInvalidVersions(result, print) {
   Object.keys(PROGRAMS).forEach(function(name) {
-    if (result[name].isSatisfied === false) {
+    const isSatisfied = result[name].isSatisfied !== false;
+    // report installed version
+    if (print || !isSatisfied) {
+      printInstalledVersion(name, result[name]);
+    }
+    // display any non-compliant versions
+    if (!isSatisfied) {
       var raw = result[name].wanted.raw;
       var range = result[name].wanted.range;
       console.log("Error: Wanted " + name + " version " + raw + " (" + range +")");
@@ -49,11 +50,11 @@ function logResult(result, quiet) {
 
 var argv = minimist(process.argv.slice(2), {
   alias: {
-    "quiet": "q",
+    "print": "p",
     "help": "h",
   },
   boolean: [
-    "quiet",
+    "print",
     "help",
   ],
 });
@@ -96,6 +97,6 @@ check(options, function(err, result) {
     process.exit(1);
     return;
   }
-  logResult(result, argv.quiet);
+  printInvalidVersions(result, argv.print);
   process.exit(result.isSatisfied ? 0 : 1);
 });

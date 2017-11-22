@@ -42,9 +42,8 @@ OPTIONS
             Use the "engines" key in the current package.json for the
             semver version ranges.
 
-      -q, --quiet
-            Don't output anything. Exit with an error code if a version
-            is not satisfied, otherwise exit with code 0.
+      -p, --print
+            Print installed versions.
 
       -h, --help
             Print this message.
@@ -52,18 +51,15 @@ OPTIONS
 
 ### Examples
 
-#### Get installed versions
-
-When no versions are given, the current node, npm, and yarn versions are
-printed out.
+#### Check for `node@6`
 
 ```
-$ check-node-version
-node: v0.12.7
-npm: v2.14.10
-yarn: v0.21.3
+$ check-node-version --node 6
+node: 8.2.1
+Error: Wanted node version 6 (>=6.0.0 <7.0.0)
+To install node, run `nvm install 6` or see https://nodejs.org/
 $ echo $?
-0
+1
 ```
 
 #### Check for `node@4` and `npm@2.14`
@@ -71,25 +67,34 @@ $ echo $?
 ```
 $ check-node-version --node 4 --npm 2.14
 node: v0.12.7
-npm: v2.14.10
-yarn: v0.21.3
 Error: Wanted node version "4" (>=4.0.0 <5.0.0)
 To install node, run `nvm install 4` or check https://nodejs.org/
 $ echo $?
 1
 ```
 
-#### Check for `node@4` and `npm@2.14`, `yarn` not installed
+#### Print installed versions
+
+When using the `--print` argument, the current installed versions are
+printed, even if they already matched the requested versions.
 
 ```
-$ check-node-version --node 4 --npm 2.14
+$ check-node-version --print
 node: v0.12.7
 npm: v2.14.10
-yarn: not installed
-Error: Wanted node version "4" (>=4.0.0 <5.0.0)
-To install node, run `nvm install 4` or check https://nodejs.org/
+yarn: v0.21.3
 $ echo $?
-1
+0
+```
+
+#### Check for `node@8` and `npm@5`
+
+If all versions match, there is no output:
+
+```
+$ check-node-version --node 8 --npm 5
+$ echo $?
+0
 ```
 
 #### Use with a `.nvmrc` file
