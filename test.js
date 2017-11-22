@@ -25,11 +25,11 @@ function getMockedGetVersionsOptions(versions) {
 test("simple call", function(t) {
   check(function(err, result) {
     t.ifError(err);
-    t.ok(result.node);
-    t.ok(result.node.version);
-    t.ok(result.npm);
-    t.ok(result.npm.version);
-    t.ok(result.yarn);
+    t.ok(result.versions.node);
+    t.ok(result.versions.node.version);
+    t.ok(result.versions.npm);
+    t.ok(result.versions.npm.version);
+    t.ok(result.versions.yarn);
     t.ok(result.isSatisfied);
     t.end();
   });
@@ -45,11 +45,11 @@ test("positive node result", function(t) {
   });
   check(wanted, options, function(err, result) {
     t.ifError(err);
-    t.ok(result.node);
-    t.ok(result.node.version);
-    t.equal(result.node.version.raw, version);
-    t.equal(result.node.wanted.range, version);
-    t.equal(result.node.isSatisfied, true);
+    t.ok(result.versions.node);
+    t.ok(result.versions.node.version);
+    t.equal(result.versions.node.version.raw, version);
+    t.equal(result.versions.node.wanted.range, version);
+    t.equal(result.versions.node.isSatisfied, true);
     t.equal(result.isSatisfied, true);
     t.end();
   });
@@ -65,10 +65,10 @@ test("negative node result", function(t) {
   });
   check(wanted, options, function(err, result) {
     t.ifError(err);
-    t.ok(result.node);
-    t.equal(result.node.version.raw, version);
-    t.equal(result.node.wanted.range, "6.9.9");
-    t.equal(result.node.isSatisfied, false);
+    t.ok(result.versions.node);
+    t.equal(result.versions.node.version.raw, version);
+    t.equal(result.versions.node.wanted.range, "6.9.9");
+    t.equal(result.versions.node.isSatisfied, false);
     t.equal(result.isSatisfied, false);
     t.end();
   });
@@ -85,13 +85,13 @@ test("positive node result, yarn not installed", function(t) {
   });
   check(wanted, options, function(err, result) {
     t.ifError(err);
-    t.ok(result.node);
-    t.equal(result.node.version.raw, version);
-    t.equal(result.node.wanted.range, version);
-    t.equal(result.node.isSatisfied, true);
+    t.ok(result.versions.node);
+    t.equal(result.versions.node.version.raw, version);
+    t.equal(result.versions.node.wanted.range, version);
+    t.equal(result.versions.node.isSatisfied, true);
     t.equal(result.isSatisfied, true);
-    t.equal(result.yarn.version, undefined);
-    t.ok(result.yarn.error);
+    t.equal(result.versions.yarn.version, undefined);
+    t.ok(result.versions.yarn.error);
     t.end();
   });
 });
@@ -107,12 +107,12 @@ test("negative node result, yarn not installed", function(t) {
   });
   check(wanted, options, function(err, result) {
     t.ifError(err);
-    t.ok(result.node);
-    t.equal(result.node.version.raw, "7.0.0");
-    t.equal(result.node.wanted.range, "6.9.9");
-    t.equal(result.node.isSatisfied, false);
-    t.equal(result.yarn.version, undefined);
-    t.ok(result.yarn.error);
+    t.ok(result.versions.node);
+    t.equal(result.versions.node.version.raw, "7.0.0");
+    t.equal(result.versions.node.wanted.range, "6.9.9");
+    t.equal(result.versions.node.isSatisfied, false);
+    t.equal(result.versions.yarn.version, undefined);
+    t.ok(result.versions.yarn.error);
     t.equal(result.isSatisfied, false);
     t.end();
   });
@@ -129,8 +129,8 @@ test("negative yarn result, yarn not installed", function(t) {
   });
   check(wanted, options, function(err, result) {
     t.ifError(err);
-    t.equal(result.yarn.version, undefined);
-    t.equal(result.yarn.wanted.range, "1.1.1");
+    t.equal(result.versions.yarn.version, undefined);
+    t.equal(result.versions.yarn.wanted.range, "1.1.1");
     t.equal(result.isSatisfied, false);
     t.end();
   });

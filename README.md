@@ -42,9 +42,8 @@ OPTIONS
             Use the "engines" key in the current package.json for the
             semver version ranges.
 
-      -q, --quiet
-            Don't output anything. Exit with an error code if a version
-            is not satisfied, otherwise exit with code 0.
+      -p, --print
+            Print installed versions.
 
       -h, --help
             Print this message.
@@ -52,44 +51,58 @@ OPTIONS
 
 ### Examples
 
-#### Get installed versions
+#### Check for node 6, failing
 
-When no versions are given, the current node, npm, and yarn versions are
-printed out.
+Check for node 6, but have 8.2.1 installed.
 
 ```
-$ check-node-version
+$ check-node-version --node 6
+node: 8.2.1
+Error: Wanted node version 6 (>=6.0.0 <7.0.0)
+To install node, run `nvm install 6` or see https://nodejs.org/
+$ echo $?
+1
+```
+
+#### Check for node 6, passing
+
+If all versions match, there is no output:
+
+```
+$ check-node-version --node 6
+$ echo $?
+0
+```
+
+#### Check for node *and* npm
+
+You can check versions of any combinations of `node`, `npm`, and `yarn`
+at one time.
+
+```
+$ check-node-version --node 4 --npm 2.14
+```
+
+#### Check for `node@4` and `npm@2.14`
+
+You can check for the version of yarn:
+
+```
+$ check-node-version --yarn 0.17.1
+```
+
+#### Print installed versions
+
+Use the `--print` option to print all currently installed versions, even
+if the version checks match.
+
+```
+$ check-node-version --print --node 0.12
 node: v0.12.7
 npm: v2.14.10
 yarn: v0.21.3
 $ echo $?
 0
-```
-
-#### Check for `node@4` and `npm@2.14`
-
-```
-$ check-node-version --node 4 --npm 2.14
-node: v0.12.7
-npm: v2.14.10
-yarn: v0.21.3
-Error: Wanted node version "4" (>=4.0.0 <5.0.0)
-To install node, run `nvm install 4` or check https://nodejs.org/
-$ echo $?
-1
-```
-
-#### Check for `node@4` and `npm@2.14`, `yarn` not installed
-
-```
-$ check-node-version --node 4 --npm 2.14
-node: v0.12.7
-npm: v2.14.10
-yarn: not installed
-Error: Wanted node version "4" (>=4.0.0 <5.0.0)
-To install node, run `nvm install 4` or check https://nodejs.org/
-$ echo $?
-1
 ```
 
 #### Use with a `.nvmrc` file
