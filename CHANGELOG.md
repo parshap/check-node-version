@@ -1,0 +1,12 @@
+## Releases
+
+### 3.0.0
+
+This release changes the default output behavior to only print
+*unsatisfied* versions. If all checked versions pass, there is no
+output. A `--print` option has been added to get the old behavior of
+always printing versions.
+
+* **Breaking**: Remove `--quiet` option, add `--print` option.
+* **Breaking**: Move versions under versions key in result object.
+* Fix bug when version command outputs more than one line.
