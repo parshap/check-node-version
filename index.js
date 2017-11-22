@@ -51,7 +51,7 @@ function runVersionCommand(command, callback) {
     }
     else {
       return callback(null, {
-        version: stdin.toString().trim(),
+        version: stdin.toString().split('\n')[0].trim(),
       });
     }
   });
