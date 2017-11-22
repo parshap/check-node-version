@@ -31,17 +31,18 @@ function printInstalledVersion(name, info) {
   }
 }
 
-function printInvalidVersions(result, print) {
+function printVersions(result, print) {
   Object.keys(PROGRAMS).forEach(function(name) {
-    const isSatisfied = result[name].isSatisfied !== false;
+    var info = result.versions[name];
+    var isSatisfied = info.isSatisfied;
     // report installed version
     if (print || !isSatisfied) {
-      printInstalledVersion(name, result[name]);
+      printInstalledVersion(name, info);
     }
     // display any non-compliant versions
     if (!isSatisfied) {
-      var raw = result[name].wanted.raw;
-      var range = result[name].wanted.range;
+      var raw = info.wanted.raw;
+      var range = info.wanted.range;
       console.log("Error: Wanted " + name + " version " + raw + " (" + range +")");
       console.log(PROGRAMS[name].getInstallInstructions(raw));
     }
@@ -97,6 +98,6 @@ check(options, function(err, result) {
     process.exit(1);
     return;
   }
-  printInvalidVersions(result, argv.print);
+  printVersions(result, argv.print);
   process.exit(result.isSatisfied ? 0 : 1);
 });

@@ -98,39 +98,38 @@ module.exports = function check(wanted, options, callback) {
   var commands = mapValues(PROGRAMS, function(program, name) {
     return options.getVersion.bind(null, name);
   });
-  parallel(commands, function(err, versions) {
+  parallel(commands, function(err, versionsResult) {
     if (err) {
       callback(err);
     }
     else {
-      var retval = mapValues(PROGRAMS, function(program, name) {
-        var name = name;
+      var versions = mapValues(PROGRAMS, function(program, name) {
         var programInfo = {};
-        if (versions[name].error) {
-          programInfo.error = versions[name].error;
+        if (versionsResult[name].error) {
+          programInfo.error = versionsResult[name].error;
         }
-        if (versions[name].version) {
-          programInfo.version = semver(versions[name].version);
+        if (versionsResult[name].version) {
+          programInfo.version = semver(versionsResult[name].version);
         }
-        if (versions[name].notfound) {
-          programInfo.notfound = versions[name].notfound;
+        if (versionsResult[name].notfound) {
+          programInfo.notfound = versionsResult[name].notfound;
         }
+        programInfo.isSatisfied = true;
         if (wanted[name]) {
           programInfo.wanted = new semver.Range(wanted[name]);
-          programInfo.isSatisfied = programInfo.version && semver.satisfies(
-            programInfo.version,
-            programInfo.wanted
-          ) || false;
+          programInfo.isSatisfied = !! (
+            programInfo.version &&
+              semver.satisfies(programInfo.version, programInfo.wanted)
+          );
         }
         return programInfo;
-      }, {});
-      retval.isSatisfied = Object.keys(wanted).reduce(function(memo, name) {
-        if (retval[name].isSatisfied !== false) {
-          return memo;
-        }
-        return false;
-      }, true);
-      callback(null, retval);
+      });
+      callback(null, {
+        versions: versions,
+        isSatisfied: Object.keys(wanted).every(function(name) {
+          return versions[name].isSatisfied;
+        }),
+      });
     }
   });
 };
