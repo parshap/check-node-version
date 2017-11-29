@@ -45,7 +45,7 @@ function printVersions(result, print) {
       var raw = info.wanted.raw;
       var range = info.wanted.range;
       console.error(chalk.red.bold("Error: Wanted " + name + " version " + raw + " (" + range +")"));
-      console.log(chalk.red(PROGRAMS[name].getInstallInstructions(raw)));
+      console.log(chalk.red.bold(PROGRAMS[name].getInstallInstructions(raw)));
     }
   });
 }
