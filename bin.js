@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 
+var chalk = require("chalk");
 var minimist = require("minimist");
 var check = require("./");
 var PROGRAMS = require("./").PROGRAMS;
@@ -9,22 +10,22 @@ var path = require("path");
 
 function logVersionError(name, err) {
   if (err.stderr) {
-    console.error(err.stderr);
+    console.error(chalk.red.bold(err.stderr));
   }
   else if (err.execError) {
-    console.error(err.execError.message);
+    console.error(chalk.red.bold(err.execError.message));
   }
   else {
-    console.error(err.message);
+    console.error(chalk.red.bold(err.message));
   }
 }
 
 function printInstalledVersion(name, info) {
   if (info.version) {
-    console.log(name + ": " + info.version);
+    console.log(chalk.grey(name + ": ") + chalk.white(info.version));
   }
   if (info.notfound) {
-    console.error(name + ': not installed');
+    console.error(chalk.red.bold(name + ': not installed'));
   }
   if (info.error) {
     logVersionError(name, info.error);
@@ -43,8 +44,8 @@ function printVersions(result, print) {
     if (!isSatisfied) {
       var raw = info.wanted.raw;
       var range = info.wanted.range;
-      console.log("Error: Wanted " + name + " version " + raw + " (" + range +")");
-      console.log(PROGRAMS[name].getInstallInstructions(raw));
+      console.error(chalk.red.bold("Error: Wanted " + name + " version " + raw + " (" + range +")"));
+      console.log(chalk.red(PROGRAMS[name].getInstallInstructions(raw)));
     }
   });
 }
