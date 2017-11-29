@@ -31,6 +31,7 @@ var PROGRAMS = {
 
 function runVersionCommand(command, callback) {
   exec(command, function(execError, stdin, stderr) {
+    console.log(command, execError, stdin, stderr);
     var commandDescription = JSON.stringify(command);
     if (execError && execError.code === 127) {
       return callback(null, {

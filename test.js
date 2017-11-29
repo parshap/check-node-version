@@ -24,6 +24,7 @@ function getMockedGetVersionsOptions(versions) {
 
 test("simple call", function(t) {
   check(function(err, result) {
+    console.log(err, result);
     t.ifError(err);
     t.ok(result.versions.node);
     t.ok(result.versions.node.version);
