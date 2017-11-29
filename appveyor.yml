@@ -10,6 +10,7 @@ install:
   - npm install
 
 test_script:
+  - npm --version
   - npm test
 
 build: off
