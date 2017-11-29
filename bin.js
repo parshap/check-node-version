@@ -22,7 +22,7 @@ function logVersionError(name, err) {
 
 function printInstalledVersion(name, info) {
   if (info.version) {
-    console.log(chalk.grey(name + ": ") + chalk.white(info.version));
+    console.log(name + ": " + chalk.bold(info.version));
   }
   if (info.notfound) {
     console.error(chalk.red.bold(name + ': not installed'));
