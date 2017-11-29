@@ -1,5 +1,13 @@
 ## Releases
 
+### 3.1.1
+
+* Fix bug with npm warnings causing errors.
+
+### 3.1.0
+
+* Add colors to terminal output.
+
 ### 3.0.0
 
 This release changes the default output behavior to only print

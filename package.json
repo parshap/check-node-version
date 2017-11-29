@@ -1,6 +1,6 @@
 {
   "name": "check-node-version",
-  "version": "3.0.0",
+  "version": "3.1.1",
   "description": "Check installed versions of node and npm",
   "main": "index.js",
   "bin": {
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/parshap/check-node-version#readme",
   "dependencies": {
+    "chalk": "^2.3.0",
     "map-values": "^1.0.1",
     "minimist": "^1.2.0",
     "object-filter": "^1.0.2",

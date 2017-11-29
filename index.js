@@ -38,7 +38,7 @@ function runVersionCommand(command, callback) {
         notfound: true,
       });
     }
-    else if (execError || stderr) {
+    else if (execError) {
       var runError = new Error("Command failed: " + commandDescription);
       if (stderr) {
         runError.stderr = stderr.trim();
