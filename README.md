@@ -131,19 +131,29 @@ This module can also be used programmatically.
 Pass it an object with the required versions of `node`, `npm`, and/or `yarn` followed by a results handler.
 
 ```javascript
-var check = require("check-node-version");
+const check = require("check-node-version");
 
 check(
-  { node: ">= 8.3", },
-  function (error, results) {
-    if (error) {
-      console.error(error);
-    } else if (!results.satisfied) {
-      console.error("Some package version(s) failed!");
-    } else {
-      console.log("All is well.");
+    { node: ">= 18.3", },
+    (error, results) => {
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        if (results.isSatisfied) {
+            console.log("All is well.");
+            return;
+        }
+
+        console.error("Some package version(s) failed!");
+
+        for (const packageName of Object.keys(results.versions)) {
+            if (!results.versions[packageName].isSatisfied) {
+                console.error(`Missing ${packageName}.`);
+            }
+        }
     }
-  }
 );
 ```
 

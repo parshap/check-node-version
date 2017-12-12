@@ -39,6 +39,21 @@ interface Options {
 }
 
 /**
+ * Requested version rang of a package.
+ */
+interface Wanted {
+    /**
+     * Resolved semver equivalent of the raw version.
+     */
+    range: string;
+
+    /**
+     * Raw semver requirement for the version.
+     */
+    raw: string;
+}
+
+/**
  * Positive result of checking a program version.
  */
 interface SatisfiedVersionInfo {
@@ -51,6 +66,11 @@ interface SatisfiedVersionInfo {
      * Retrieved version.
      */
     version: string;
+
+    /**
+     * Requested version range of the package, if any.
+     */
+    wanted?: Wanted;
 }
 
 /**
@@ -76,6 +96,11 @@ interface UnsatisfiedVersionInfo {
      * Retrieved version, if available.
      */
     version?: string;
+
+    /**
+     * Requested version range of the package, if any.
+     */
+    wanted?: Wanted;
 }
 
 /**
@@ -84,13 +109,20 @@ interface UnsatisfiedVersionInfo {
 type VersionInfo = SatisfiedVersionInfo | UnsatisfiedVersionInfo;
 
 /**
+ * Versions for each package, keyed by package name.
+ */
+interface VersionInfos {
+    [i: string]: VersionInfo;
+}
+
+/**
  * Results from checking versions.
  */
 interface Results {
     /**
-     * Versions for each package.
+     * Versions for each package, keyed by package name.
      */
-    versions: VersionInfo[];
+    versions: VersionInfos;
 
     /**
      * Whether all versions were satisfied.
