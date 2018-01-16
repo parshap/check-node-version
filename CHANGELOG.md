@@ -1,5 +1,9 @@
 ## Releases
 
+### 3.2.0
+
+* Add `index.ts` TypeScript typings file
+
 ### 3.1.1
 
 * Fix bug with npm warnings causing errors.
