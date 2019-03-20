@@ -18,7 +18,7 @@
     "semver"
   ],
   "author": "Parsha Pourkhomami",
-  "license": "WTFPL",
+  "license": "Unlicense",
   "types": "./index.d.ts",
   "bugs": {
     "url": "https://github.com/parshap/check-node-version/issues"
