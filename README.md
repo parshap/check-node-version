@@ -6,7 +6,7 @@ Check installed versions of `node`, `npm`, and `yarn`.
 
 [npm: *check-node-version*](https://www.npmjs.com/package/check-node-version)
 
-```
+```bash
 npm install check-node-version
 ```
 
@@ -17,7 +17,7 @@ SYNOPSIS
       check-node-version [OPTIONS]
 
 DESCRIPTION
-      check-node-version will check if the current node, npm and yarn
+      check-node-version will check if the current node, npm, npx and yarn
       versions match the given semver version ranges.
 
       If the given version is not satisfied, information about
@@ -32,6 +32,10 @@ OPTIONS
 
       --npm VERSION
             Check that the current npm version matches the given semver
+            version range.
+
+      --npx VERSION
+            Check that the current npx version matches the given semver
             version range.
 
       --yarn VERSION
@@ -55,7 +59,7 @@ OPTIONS
 
 Check for node 6, but have 8.2.1 installed.
 
-```
+```bash
 $ check-node-version --node 6
 node: 8.2.1
 Error: Wanted node version 6 (>=6.0.0 <7.0.0)
@@ -68,46 +72,50 @@ $ echo $?
 
 If all versions match, there is no output:
 
-```
+```bash
 $ check-node-version --node 6
 $ echo $?
 0
 ```
 
-#### Check for node *and* npm
+#### Check for multiple versions simultaneously
 
-You can check versions of any combinations of `node`, `npm`, and `yarn`
+You can check versions of any combinations of `node`, `npm`, `npx`, and `yarn`
 at one time.
 
-```
-$ check-node-version --node 4 --npm 2.14
-```
-
-#### Check for `node@4` and `npm@2.14`
-
-You can check for the version of yarn:
-
-```
-$ check-node-version --yarn 0.17.1
+```bash
+$ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
 ```
 
 #### Print installed versions
 
-Use the `--print` option to print all currently installed versions, even
-if the version checks match.
+Use the `--print` option to print all currently installed versions.
 
-```
-$ check-node-version --print --node 0.12
-node: v0.12.7
-npm: v2.14.10
-yarn: v0.21.3
+```bash
+$ check-node-version --print
+node: 11.12.0
+npm: 6.9.0
+npx: 10.2.0
+yarn: 1.13.0
 $ echo $?
+0
+```
+
+Even with a missing binary (Windows error shown), if the checks run, all is good.
+```powershell
+$ check-node-version --print --node 11.12
+node: 11.12.0
+npm: 6.9.0
+npx: 10.2.0
+'yarn' is not recognized as an internal or external command,
+operable program or batch file.
+$ $LASTEXITCODE
 0
 ```
 
 #### Use with a `.nvmrc` file
 
-```
+```bash
 $ check-node-version --node $(cat .nvmrc) --npm 2.14
 ```
 

@@ -1,7 +1,7 @@
 /**
  * Which versions of which packages are required.
  */
-interface Wanted {
+interface WantedVersions {
     /**
      * Required version of Node.js.
      */
@@ -39,7 +39,7 @@ interface Options {
 }
 
 /**
- * Requested version rang of a package.
+ * Requested version range of a package.
  */
 interface Wanted {
     /**
@@ -141,10 +141,12 @@ type OnComplete = (error: Error | null, results: Results) => void;
 /**
  * Checks package versions.
  *
- * @param wanted   Which versions of programs are required.
+ * @param [wanted]   Which versions of programs are required.
+ * @param [options]   Extra options to run with.
  * @param onComplete   Handles results from checking versions.
  */
-declare function check(wanted: Wanted, onComplete: OnComplete): void;
-declare function check(wanted: Wanted, options: Options, onComplete: OnComplete): void;
+declare function check(onComplete: OnComplete): void;
+declare function check(wanted: WantedVersions, onComplete: OnComplete): void;
+declare function check(wanted: WantedVersions, options: Options, onComplete: OnComplete): void;
 
 export = check;
