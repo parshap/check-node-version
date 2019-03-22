@@ -10,6 +10,10 @@ Options:
             Check that the current npm version matches the given semver
             version range.
 
+      --npx VERSION
+            Check that the current npx version matches the given semver
+            version range.
+
       --yarn VERSION
             Check that the current yarn version matches the given semver
             version range.
