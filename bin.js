@@ -59,6 +59,12 @@ var argv = minimist(process.argv.slice(2), {
     "print",
     "help",
   ],
+  string: [
+    "node",
+    "npm",
+    "npx",
+    "yarn",
+  ]
 });
 
 if (argv.help) {
