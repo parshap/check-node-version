@@ -21,6 +21,12 @@ var PROGRAMS = {
       return "To install npm, run `npm install -g npm@" + v + "`";
     }
   },
+  npx: {
+    getVersion: runVersionCommand.bind(null, "npx --version"),
+    getInstallInstructions: function(v) {
+      return "To install npx, run `npm install -g npx@" + v + "`";
+    }
+  },
   yarn: {
     getVersion: runVersionCommand.bind(null, "yarn --version"),
     getInstallInstructions: function(v) {
