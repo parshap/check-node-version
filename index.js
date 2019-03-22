@@ -38,23 +38,35 @@ var PROGRAMS = {
 function runVersionCommand(command, callback) {
   exec(command, function(execError, stdin, stderr) {
     var commandDescription = JSON.stringify(command);
-    if (execError && execError.code === 127) {
-      return callback(null, {
-        notfound: true,
-      });
-    }
-    else if (execError) {
-      var runError = new Error("Command failed: " + commandDescription);
-      if (stderr) {
-        runError.stderr = stderr.trim();
+
+    if (execError) {
+      if ((process.platform === 'win32') && (execError.code === 1)) {
+        if (stderr.indexOf('is not recognized')) {
+          execError.code = 127;
+        }
       }
-      if (execError) {
-        runError.execError = execError;
+
+
+      if (execError.code === 127) {
+        return callback(null, {
+          notfound: true,
+        });
       }
-      return callback(null, {
-        error: runError,
-      });
+
+      else {
+        var runError = new Error("Command failed: " + commandDescription);
+        if (stderr) {
+          runError.stderr = stderr.trim();
+        }
+        if (execError) {
+          runError.execError = execError;
+        }
+        return callback(null, {
+          error: runError,
+        });
+      }
     }
+
     else {
       return callback(null, {
         version: stdin.toString().split('\n')[0].trim(),

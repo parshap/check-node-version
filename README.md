@@ -101,17 +101,20 @@ $ echo $?
 0
 ```
 
-Even with a missing binary (Windows error shown), if the checks run, all is good.
+Even with a missing binary, if the checks run, all is good.
 ```powershell
 $ check-node-version --print --node 11.12
 node: 11.12.0
 npm: 6.9.0
 npx: 10.2.0
-'yarn' is not recognized as an internal or external command,
-operable program or batch file.
+yarn: not installed
 $ $LASTEXITCODE
 0
 ```
+
+> **NOTE:**
+> Both preceding examples show that this works equally cross-platform,
+> the first one being a *nix shell, the second one on Windows.
 
 #### Use with a `.nvmrc` file
 
