@@ -1,5 +1,9 @@
 ## Releases
 
+### 3.3.0
+
+* Add NPX support
+
 ### 3.2.0
 
 * Add `index.ts` TypeScript typings file
