@@ -5,9 +5,8 @@ var semver = require("semver");
 var parallel = require("run-parallel");
 var mapValues = require("map-values");
 var filterObject = require("object-filter");
-var assign = require("object.assign");
 
-var isWindows = (process.platform === 'win32');
+var isWindows = (process.platform === "win32");
 
 var PROGRAMS = {
   node: {
@@ -38,37 +37,35 @@ var PROGRAMS = {
 };
 
 function runVersionCommand(command, callback) {
-  exec(command, function(execError, stdin, stderr) {
+  exec(command, function(execError, stdout, stderr) {
     var commandDescription = JSON.stringify(command);
 
     if (!execError) {
       return callback(null, {
-        version: stdin.toString().split('\n')[0].trim(),
+        version: stdout.toString().split("\n")[0].trim(),
       });
     }
 
     if (
       (execError.code === 127)
       ||
-      (isWindows && execError.message.indexOf('is not recognized'))
+      (isWindows && (execError.message.indexOf("is not recognized") !== -1))
      ) {
       return callback(null, {
         notfound: true,
       });
     }
 
-    else {
-      var runError = new Error("Command failed: " + commandDescription);
-      runError.execError = execError;
+    var runError = new Error("Command failed: " + commandDescription);
+    runError.execError = execError;
 
-      if (stderr) {
-        runError.stderr = stderr.trim();
-      }
-
-      return callback(null, {
-        error: runError,
-      });
+    if (stderr) {
+      runError.stderr = stderr.toString().trim();
     }
+
+    return callback(null, {
+      error: runError,
+    });
   });
 }
 
@@ -87,39 +84,26 @@ function normalizeWanted(wanted) {
   return wanted;
 }
 
-function normalizeOptions(options) {
-  return assign({
-    getVersion: defaultGetVersion,
-  }, options);
-}
-
-function defaultGetVersion(name, callback) {
-  PROGRAMS[name].getVersion(callback);
-}
-
-module.exports = function check(wanted, options, callback) {
+module.exports = function check(wanted, callback) {
   // Normalize arguments
   if (typeof wanted === "function") {
     callback = wanted;
     wanted = null;
   }
-  if (typeof options === "function") {
-    callback = options;
-    options = null;
-  }
-  wanted = normalizeWanted(wanted);
-  options = normalizeOptions(options);
 
-  var commands = mapValues(PROGRAMS, function(program, name) {
-    return options.getVersion.bind(null, name);
+  wanted = normalizeWanted(wanted);
+
+  var commands = mapValues(PROGRAMS, function(program) {
+    return program.getVersion;
   });
+
   parallel(commands, function(err, versionsResult) {
     if (err) {
       callback(err);
       return;
     }
 
-    var versions = mapValues(PROGRAMS, function(program, name) {
+    var versions = mapValues(PROGRAMS, function(_, name) {
       var programInfo = {};
       if (versionsResult[name].error) {
         programInfo.error = versionsResult[name].error;

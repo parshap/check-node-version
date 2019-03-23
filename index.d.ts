@@ -29,16 +29,6 @@ type OnGetVersion = (error: Error | null, info: VersionInfo) => void;
 type GetVersion = (packageName: string, onComplete: OnGetVersion) => void;
 
 /**
- * Extra options to run with.
- */
-interface Options {
-    /**
-     * @returns The version of a package.
-     */
-    getVersion: GetVersion;
-}
-
-/**
  * Requested version range of a package.
  */
 interface Wanted {
@@ -142,11 +132,9 @@ type OnComplete = (error: Error | null, results: Results) => void;
  * Checks package versions.
  *
  * @param [wanted]   Which versions of programs are required.
- * @param [options]   Extra options to run with.
  * @param onComplete   Handles results from checking versions.
  */
 declare function check(onComplete: OnComplete): void;
 declare function check(wanted: WantedVersions, onComplete: OnComplete): void;
-declare function check(wanted: WantedVersions, options: Options, onComplete: OnComplete): void;
 
 export = check;
