@@ -7,6 +7,8 @@ var mapValues = require("map-values");
 var filterObject = require("object-filter");
 var assign = require("object.assign");
 
+var isWindows = (process.platform === 'win32');
+
 var PROGRAMS = {
   node: {
     getVersion: runVersionCommand.bind(null, "node --version"),
@@ -39,37 +41,32 @@ function runVersionCommand(command, callback) {
   exec(command, function(execError, stdin, stderr) {
     var commandDescription = JSON.stringify(command);
 
-    if (execError) {
-      if ((process.platform === 'win32') && (execError.code === 1)) {
-        if (stderr.indexOf('is not recognized')) {
-          execError.code = 127;
-        }
-      }
+    if (!execError) {
+      return callback(null, {
+        version: stdin.toString().split('\n')[0].trim(),
+      });
+    }
 
-
-      if (execError.code === 127) {
-        return callback(null, {
-          notfound: true,
-        });
-      }
-
-      else {
-        var runError = new Error("Command failed: " + commandDescription);
-        if (stderr) {
-          runError.stderr = stderr.trim();
-        }
-        if (execError) {
-          runError.execError = execError;
-        }
-        return callback(null, {
-          error: runError,
-        });
-      }
+    if (
+      (execError.code === 127)
+      ||
+      (isWindows && execError.message.indexOf('is not recognized'))
+     ) {
+      return callback(null, {
+        notfound: true,
+      });
     }
 
     else {
+      var runError = new Error("Command failed: " + commandDescription);
+      runError.execError = execError;
+
+      if (stderr) {
+        runError.stderr = stderr.trim();
+      }
+
       return callback(null, {
-        version: stdin.toString().split('\n')[0].trim(),
+        error: runError,
       });
     }
   });
@@ -119,36 +116,37 @@ module.exports = function check(wanted, options, callback) {
   parallel(commands, function(err, versionsResult) {
     if (err) {
       callback(err);
+      return;
     }
-    else {
-      var versions = mapValues(PROGRAMS, function(program, name) {
-        var programInfo = {};
-        if (versionsResult[name].error) {
-          programInfo.error = versionsResult[name].error;
-        }
-        if (versionsResult[name].version) {
-          programInfo.version = semver(versionsResult[name].version);
-        }
-        if (versionsResult[name].notfound) {
-          programInfo.notfound = versionsResult[name].notfound;
-        }
-        programInfo.isSatisfied = true;
-        if (wanted[name]) {
-          programInfo.wanted = new semver.Range(wanted[name]);
-          programInfo.isSatisfied = !! (
-            programInfo.version &&
-              semver.satisfies(programInfo.version, programInfo.wanted)
-          );
-        }
-        return programInfo;
-      });
-      callback(null, {
-        versions: versions,
-        isSatisfied: Object.keys(wanted).every(function(name) {
-          return versions[name].isSatisfied;
-        }),
-      });
-    }
+
+    var versions = mapValues(PROGRAMS, function(program, name) {
+      var programInfo = {};
+      if (versionsResult[name].error) {
+        programInfo.error = versionsResult[name].error;
+      }
+      if (versionsResult[name].version) {
+        programInfo.version = semver(versionsResult[name].version);
+      }
+      if (versionsResult[name].notfound) {
+        programInfo.notfound = versionsResult[name].notfound;
+      }
+      programInfo.isSatisfied = true;
+      if (wanted[name]) {
+        programInfo.wanted = new semver.Range(wanted[name]);
+        programInfo.isSatisfied = !! (
+          programInfo.version &&
+            semver.satisfies(programInfo.version, programInfo.wanted)
+        );
+      }
+      return programInfo;
+    });
+
+    callback(null, {
+      versions: versions,
+      isSatisfied: Object.keys(wanted).every(function(name) {
+        return versions[name].isSatisfied;
+      }),
+    });
   });
 };
 
