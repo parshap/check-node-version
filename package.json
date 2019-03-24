@@ -6,6 +6,11 @@
   "bin": {
     "check-node-version": "bin.js"
   },
+  "files": [
+    "bin.js",
+    "index.d.ts",
+    "usage.txt"
+  ],
   "scripts": {
     "test": "ava test.js"
   },
