@@ -12,7 +12,6 @@ const WIN = "win32";
 
 module.exports = {
   crossTest,
-  mockCheck,
 
   after,
   from,
@@ -33,6 +32,21 @@ function from(version) {
 //
 
 
+/**
+ * @callback AssertionsCallback
+ *
+ * @param {Object} t - https://github.com/avajs/ava/blob/master/docs/02-execution-context.md
+ * @param {?Error} error - any error that occurs during version query other than the app not being installed
+ * @param {Results} result - data on the wanted and installed versions
+ */
+/**
+ * Runs tests across environments, version setups, and version requirements.
+ *
+ * @param {string} label - basic test label
+ * @param {Object|Object[]} versions - the available versions
+ * @param {Object|Object[]} wanted - the wanted versions
+ * @param {AssertionsCallback} assertions - the callback containing the assertions
+ */
 function crossTest(label, installed, wanted, assertions) {
   if (Array.isArray(installed)) {
     installed.forEach((setup, i) => {

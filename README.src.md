@@ -1,17 +1,10 @@
-<a name="check-node-version"></a>
 # check-node-version
-[![NPM version](http://img.shields.io/npm/v/check-node-version.svg?style=flat-square)](https://www.npmjs.org/package/check-node-version)
+{"gitdown": "badge", "name": "npm-version"}
 
-Check installed versions of `node`, `npm`, `npx`, and `yarn`.
+Check installed versions of `node`, `npm`, and `yarn`.
 
-* [check-node-version](#check-node-version)
-    * [Install](#check-node-version-install)
-    * [Command Line Usage](#check-node-version-command-line-usage)
-        * [Examples](#check-node-version-command-line-usage-examples)
-    * [API Usage](#check-node-version-api-usage)
+{"gitdown": "contents"}
 
-
-<a name="check-node-version-install"></a>
 ## Install
 
 [npm: *check-node-version*](https://www.npmjs.com/package/check-node-version)
@@ -20,55 +13,14 @@ Check installed versions of `node`, `npm`, `npx`, and `yarn`.
 npm install check-node-version
 ```
 
-<a name="check-node-version-command-line-usage"></a>
 ## Command Line Usage
 
 ```
-SYNOPSIS
-      check-node-version [OPTIONS]
-
-DESCRIPTION
-      check-node-version will check if the current node, npm, npx and yarn
-      versions match the given semver version ranges.
-
-      If the given version is not satisfied, information about
-      installing the needed version is printed and the program exits
-      with an error code.
-
-OPTIONS
-
-      --node VERSION
-            Check that the current node version matches the given semver
-            version range.
-
-      --npm VERSION
-            Check that the current npm version matches the given semver
-            version range.
-
-      --npx VERSION
-            Check that the current npx version matches the given semver
-            version range.
-
-      --yarn VERSION
-            Check that the current yarn version matches the given semver
-            version range.
-
-      --package
-            Use the "engines" key in the current package.json for the
-            semver version ranges.
-
-      -p, --print
-            Print installed versions.
-
-      -h, --help
-            Print this message.
-
+{"gitdown": "include", "file": "./usage.txt"}
 ```
 
-<a name="check-node-version-command-line-usage-examples"></a>
 ### Examples
 
-<a name="check-node-version-command-line-usage-examples-check-for-node-6-failing"></a>
 #### Check for node 6, failing
 
 Check for node 6, but have 8.2.1 installed.
@@ -82,7 +34,6 @@ $ echo $?
 1
 ```
 
-<a name="check-node-version-command-line-usage-examples-check-for-node-6-passing"></a>
 #### Check for node 6, passing
 
 If all versions match, there is no output:
@@ -93,7 +44,6 @@ $ echo $?
 0
 ```
 
-<a name="check-node-version-command-line-usage-examples-check-for-multiple-versions-simultaneously"></a>
 #### Check for multiple versions simultaneously
 
 You can check versions of any combinations of `node`, `npm`, `npx`, and `yarn`
@@ -103,7 +53,6 @@ at one time.
 $ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
 ```
 
-<a name="check-node-version-command-line-usage-examples-print-installed-versions"></a>
 #### Print installed versions
 
 Use the `--print` option to print all currently installed versions.
@@ -133,15 +82,13 @@ $ $LASTEXITCODE
 > Both preceding examples show that this works equally cross-platform,
 > the first one being a *nix shell, the second one running on Windows.
 
-<a name="check-node-version-command-line-usage-examples-use-with-a-nvmrc-file"></a>
-#### Use with a <code>.nvmrc</code> file
+#### Use with a `.nvmrc` file
 
 ```bash
 $ check-node-version --node $(cat .nvmrc) --npm 2.14
 ```
 
-<a name="check-node-version-command-line-usage-examples-use-with-npm-test"></a>
-#### Use with <code>npm test</code>
+#### Use with `npm test`
 
 ```json
 {
@@ -155,7 +102,6 @@ $ check-node-version --node $(cat .nvmrc) --npm 2.14
 }
 ```
 
-<a name="check-node-version-api-usage"></a>
 ## API Usage
 
 This module can also be used programmatically.

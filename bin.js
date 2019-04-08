@@ -10,19 +10,6 @@ const minimist = require("minimist");
 const check = require("./");
 const { PROGRAMS } = require("./");
 
-function logVersionError(name, err) {
-  if (err.stderr) {
-    console.error(chalk.red.bold(err.stderr));
-    return;
-  }
-
-  if (err.execError) {
-    console.error(chalk.red.bold(err.execError.message));
-    return;
-  }
-
-  console.error(chalk.red.bold(err.message));
-}
 
 function printInstalledVersion(name, info) {
   if (info.version) {
@@ -35,10 +22,6 @@ function printInstalledVersion(name, info) {
     } else {
       console.error(chalk.yellow.bold(name + ': not installed'));
     }
-  }
-
-  if (info.error) {
-    logVersionError(name, info.error);
   }
 }
 
@@ -123,8 +106,7 @@ if (argv.package) {
 
 check(options, (err, result) => {
   if (err) {
-    console.error(err.message);
-    process.exit(1);
+    throw err;
   }
 
   printVersions(result, argv.print);

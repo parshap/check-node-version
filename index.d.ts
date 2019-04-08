@@ -73,11 +73,6 @@ interface UnsatisfiedVersionInfo {
     notfound?: boolean;
 
     /**
-     * Any error thrown during checking.
-     */
-    error?: Error;
-
-    /**
      * Whether the version was known to satisfy its requirements (false).
      */
     isSatisfied: false;

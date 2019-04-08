@@ -1,6 +1,15 @@
-Usage: check-node-version [OPTIONS]
+SYNOPSIS
+      check-node-version [OPTIONS]
 
-Options:
+DESCRIPTION
+      check-node-version will check if the current node, npm, npx and yarn
+      versions match the given semver version ranges.
+
+      If the given version is not satisfied, information about
+      installing the needed version is printed and the program exits
+      with an error code.
+
+OPTIONS
 
       --node VERSION
             Check that the current node version matches the given semver

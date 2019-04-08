@@ -58,16 +58,16 @@ function runVersionCommand(command, callback) {
       });
     }
 
-    const runError = new Error("Command failed: " + commandDescription);
-    runError.execError = execError;
+    // something went very wrong during execution
+    let errorMessage = `Command failed: ${commandDescription}`
 
     if (stderr) {
-      runError.stderr = stderr.toString().trim();
+      errorMessage += `\n\nstderr:\n${stderr.toString().trim()}\n`;
     }
 
-    return callback(null, {
-      error: runError,
-    });
+    errorMessage += `\n\noriginal error message:\n${execError.message}\n`;
+
+    return callback(new Error(errorMessage));
   });
 }
 
@@ -108,11 +108,9 @@ module.exports = function check(wanted, callback) {
     }
 
     const versions = mapValues(PROGRAMS, (_, name) => {
-      const programInfo = {};
-
-      if (versionsResult[name].error) {
-        programInfo.error = versionsResult[name].error;
-      }
+      const programInfo = {
+        isSatisfied: true,
+      };
 
       if (versionsResult[name].version) {
         programInfo.version = semver(versionsResult[name].version);
@@ -121,8 +119,6 @@ module.exports = function check(wanted, callback) {
       if (versionsResult[name].notfound) {
         programInfo.notfound = versionsResult[name].notfound;
       }
-
-      programInfo.isSatisfied = true;
 
       if (wanted[name]) {
         programInfo.wanted = new semver.Range(wanted[name]);
