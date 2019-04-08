@@ -1,44 +1,46 @@
 "use strict";
 
-var exec = require("child_process").exec;
-var semver = require("semver");
-var parallel = require("run-parallel");
-var mapValues = require("map-values");
-var filterObject = require("object-filter");
+const exec = require("child_process").exec;
+const semver = require("semver");
+const parallel = require("run-parallel");
+const mapValues = require("map-values");
+const filterObject = require("object-filter");
 
-var isWindows = (process.platform === "win32");
+const runningOnWindows = (process.platform === "win32");
 
-var PROGRAMS = {
+
+const PROGRAMS = {
   node: {
     getVersion: runVersionCommand.bind(null, "node --version"),
-    getInstallInstructions: function(v) {
+    getInstallInstructions(v) {
       return "To install node, run `nvm install " + v +
         "` or see https://nodejs.org/";
     }
   },
   npm: {
     getVersion: runVersionCommand.bind(null, "npm --version"),
-    getInstallInstructions: function(v) {
+    getInstallInstructions(v) {
       return "To install npm, run `npm install -g npm@" + v + "`";
     }
   },
   npx: {
     getVersion: runVersionCommand.bind(null, "npx --version"),
-    getInstallInstructions: function(v) {
+    getInstallInstructions(v) {
       return "To install npx, run `npm install -g npx@" + v + "`";
     }
   },
   yarn: {
     getVersion: runVersionCommand.bind(null, "yarn --version"),
-    getInstallInstructions: function(v) {
+    getInstallInstructions(v) {
       return "To install yarn, see https://yarnpkg.com/lang/en/docs/install/";
     }
   },
 };
 
+
 function runVersionCommand(command, callback) {
-  exec(command, function(execError, stdout, stderr) {
-    var commandDescription = JSON.stringify(command);
+  exec(command, (execError, stdout, stderr) => {
+    const commandDescription = JSON.stringify(command);
 
     if (!execError) {
       return callback(null, {
@@ -49,14 +51,14 @@ function runVersionCommand(command, callback) {
     if (
       (execError.code === 127)
       ||
-      (isWindows && (execError.message.indexOf("is not recognized") !== -1))
+      (runningOnWindows && execError.message.includes("is not recognized"))
      ) {
       return callback(null, {
         notfound: true,
       });
     }
 
-    var runError = new Error("Command failed: " + commandDescription);
+    const runError = new Error("Command failed: " + commandDescription);
     runError.execError = execError;
 
     if (stderr) {
@@ -73,14 +75,18 @@ function runVersionCommand(command, callback) {
 // something valid was given.
 function normalizeWanted(wanted) {
   wanted = wanted || {};
+
   // Validate keys
   wanted = filterObject(wanted, Boolean);
+
   // Normalize to strings
   wanted = mapValues(wanted, String);
+
   // Filter existing programs
-  wanted = filterObject(wanted, function(version, key) {
+  wanted = filterObject(wanted, (_, key) => {
     return PROGRAMS[key];
   });
+
   return wanted;
 }
 
@@ -93,33 +99,37 @@ module.exports = function check(wanted, callback) {
 
   wanted = normalizeWanted(wanted);
 
-  var commands = mapValues(PROGRAMS, function(program) {
-    return program.getVersion;
-  });
+  const commands = mapValues(PROGRAMS, ({ getVersion }) => ( getVersion ));
 
-  parallel(commands, function(err, versionsResult) {
+  parallel(commands, (err, versionsResult) => {
     if (err) {
       callback(err);
       return;
     }
 
-    var versions = mapValues(PROGRAMS, function(_, name) {
-      var programInfo = {};
+    const versions = mapValues(PROGRAMS, (_, name) => {
+      const programInfo = {};
+
       if (versionsResult[name].error) {
         programInfo.error = versionsResult[name].error;
       }
+
       if (versionsResult[name].version) {
         programInfo.version = semver(versionsResult[name].version);
       }
+
       if (versionsResult[name].notfound) {
         programInfo.notfound = versionsResult[name].notfound;
       }
+
       programInfo.isSatisfied = true;
+
       if (wanted[name]) {
         programInfo.wanted = new semver.Range(wanted[name]);
-        programInfo.isSatisfied = !! (
-          programInfo.version &&
-            semver.satisfies(programInfo.version, programInfo.wanted)
+        programInfo.isSatisfied = Boolean(
+          programInfo.version
+          &&
+          semver.satisfies(programInfo.version, programInfo.wanted)
         );
       }
       return programInfo;
@@ -127,9 +137,7 @@ module.exports = function check(wanted, callback) {
 
     callback(null, {
       versions: versions,
-      isSatisfied: Object.keys(wanted).every(function(name) {
-        return versions[name].isSatisfied;
-      }),
+      isSatisfied: Object.keys(wanted).every(name => versions[name].isSatisfied),
     });
   });
 };

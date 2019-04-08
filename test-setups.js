@@ -1,28 +1,40 @@
-var v = require("./test-versions")
+const {
+  nodeCurrent, nodeLTS, nodeOld,
+  npmCurrent, npmLTS, npmLatest, npmOld,
+  npxCurrent, npxLTS, npxLatest, npxOld,
+  yarnCurrent,
+} = require("./test-versions");
 
 exports.current = {
-  node: v.nodeCurrent,
-  npm: v.npmCurrent,
-  npx: v.npxCurrent,
+  node: nodeCurrent,
+  npm: npmCurrent,
+  npx: npxCurrent,
 };
 
 exports.latest = {
-  node: v.nodeCurrent,
-  npm: v.npmLatest,
-  npx: v.npxLatest,
+  node: nodeCurrent,
+  npm: npmLatest,
+  npx: npxLatest,
 };
 
 exports.lts = {
-  node: v.nodeLTS,
-  npm: v.npmLTS,
-  npx: v.npxLTS,
+  node: nodeLTS,
+  npm: npmLTS,
+  npx: npxLTS,
 };
 
 exports.old = {
-  node: v.nodeOld,
-  npm: v.npmOld,
+  node: nodeOld,
+  npm: npmOld,
+  npx: npxOld,
 };
 
-exports.npx = Object.assign({ npx: v.npmLatest }, exports.old);
+exports.npx = {
+  ...exports.old,
+  npx: npmLatest
+};
 
-exports.yarn = Object.assign({ yarn: v.yarnCurrent }, exports.current);
+exports.yarn = {
+  ...exports.current,
+  yarn: yarnCurrent
+};

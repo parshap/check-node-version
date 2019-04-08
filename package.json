@@ -1,6 +1,9 @@
 {
   "name": "check-node-version",
   "version": "3.3.0",
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "description": "Check installed versions of node and npm",
   "main": "index.js",
   "bin": {
@@ -34,7 +37,6 @@
     "map-values": "^1.0.1",
     "minimist": "^1.2.0",
     "object-filter": "^1.0.2",
-    "object.assign": "^4.0.4",
     "run-parallel": "^1.1.4",
     "semver": "^5.0.3"
   },
