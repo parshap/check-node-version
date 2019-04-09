@@ -1,7 +1,9 @@
 # check-node-version
 {"gitdown": "badge", "name": "npm-version"}
+{"gitdown": "badge", "name": "appveyor"}
+{"gitdown": "badge", "name": "travis"}
 
-Check installed versions of `node`, `npm`, and `yarn`.
+Check installed versions of `node`, `npm`, `npx`, and `yarn`.
 
 {"gitdown": "contents"}
 
