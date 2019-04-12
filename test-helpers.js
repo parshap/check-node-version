@@ -1,4 +1,4 @@
-const test = require("ava");
+const test = require("ava").cb;
 const chalk = require("chalk");
 const proxyquire = require("proxyquire");
 
@@ -67,16 +67,16 @@ function crossTest(label, installed, wanted, assertions) {
     t.end();
   }
 
-  test.cb ((label + chalk.blue(" *nix")), t => {
+  test((label + chalk.blue(" *nix")), t => {
     mockCheck(NIX, installed)(wanted, callback.bind(null, t));
   });
 
-  test.cb ((label + chalk.blue(" Win")), t => {
+  test((label + chalk.blue(" Win")), t => {
     mockCheck(WIN, installed)(wanted, callback.bind(null, t));
   });
 }
 
-function mockCheck (platform, versions) {
+function mockCheck(platform, versions) {
   Object.defineProperty(process, "platform", { value: platform })
 
   try {

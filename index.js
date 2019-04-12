@@ -1,32 +1,39 @@
 "use strict";
 
-const exec = require("child_process").exec;
-const semver = require("semver");
-const parallel = require("run-parallel");
-const mapValues = require("map-values");
+const { exec } = require("child_process");
+const path = require("path");
+
 const filterObject = require("object-filter");
+const mapValues = require("map-values");
+const parallel = require("run-parallel");
+const semver = require("semver");
+
 
 const runningOnWindows = (process.platform === "win32");
+
+const pathSeperator = runningOnWindows ? ";" : ":";
+const originalPath = process.env.PATH;
+// ignore locally installed packages
+const globalPath = originalPath.replace(new RegExp(path.join(process.cwd(), "node_modules/.bin").replace(/\\/g, '\\\\') + pathSeperator, 'g'), "");
 
 
 const PROGRAMS = {
   node: {
     getVersion: runVersionCommand.bind(null, "node --version"),
     getInstallInstructions(v) {
-      return "To install node, run `nvm install " + v +
-        "` or see https://nodejs.org/";
+      return `To install node, run \`nvm install ${v}\` or see https://nodejs.org/`;
     }
   },
   npm: {
     getVersion: runVersionCommand.bind(null, "npm --version"),
     getInstallInstructions(v) {
-      return "To install npm, run `npm install -g npm@" + v + "`";
+      return `To install npm, run \`npm install -g npm@${v}\``;
     }
   },
   npx: {
     getVersion: runVersionCommand.bind(null, "npx --version"),
     getInstallInstructions(v) {
-      return "To install npx, run `npm install -g npx@" + v + "`";
+      return `To install npx, run \`npm install -g npx@${v}\``;
     }
   },
   yarn: {
@@ -39,6 +46,7 @@ const PROGRAMS = {
 
 
 function runVersionCommand(command, callback) {
+  process.env.PATH = globalPath;
   exec(command, (execError, stdout, stderr) => {
     const commandDescription = JSON.stringify(command);
 
@@ -69,6 +77,7 @@ function runVersionCommand(command, callback) {
 
     return callback(new Error(errorMessage));
   });
+  process.env.PATH = originalPath;
 }
 
 // Return object containing only keys that a program exists for and

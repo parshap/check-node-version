@@ -1,5 +1,9 @@
 "use strict";
 
+const test = require("ava").cb;
+
+const check = require(".");
+
 const {
   nodeCurrent, nodeLTS, nodeOld,
   npmCurrent, npmLTS, npmLatest, npmOld,
@@ -20,6 +24,17 @@ const {
 } = require("./test-helpers");
 
 
+test("global versions only", t => {
+  // check for locally installed npm
+  check({ npm: require('npm').version }, (error, result) => {
+    t.falsy(error);
+    t.false(result.isSatisfied);
+    t.truthy(result.versions.npm);
+    t.end();
+  });
+});
+
+
 crossTest("simple call", [current, latest, lts, old, npx, yarn], {}, (t, err, result) => {
   t.falsy(err);
   t.truthy(result.versions.node);
@@ -38,11 +53,13 @@ crossTest("positive node result", current, [
   { node: from(nodeOld) },
 ], (t, err, result) => {
   t.falsy(err);
+  t.true(result.isSatisfied);
+  t.true(result.versions.node.isSatisfied);
+
   t.truthy(result.versions.node);
   t.truthy(result.versions.node.version);
+
   t.is(result.versions.node.version.raw, nodeCurrent);
-  t.is(result.versions.node.isSatisfied, true);
-  t.is(result.isSatisfied, true);
 });
 
 crossTest("negative node result", old, [
@@ -55,37 +72,43 @@ crossTest("negative node result", old, [
   { node: after(nodeOld) },
 ], (t, err, result) => {
   t.falsy(err);
+  t.false(result.versions.node.isSatisfied);
+  t.false(result.isSatisfied);
+
   t.truthy(result.versions.node);
   t.is(result.versions.node.version.raw, nodeOld);
-  t.is(result.versions.node.isSatisfied, false);
-  t.is(result.isSatisfied, false);
 });
 
 crossTest("positive node result, yarn not installed", current, { node: nodeCurrent }, (t, err, result) => {
   t.falsy(err);
+  t.true(result.isSatisfied);
+  t.true(result.versions.node.isSatisfied);
+
+  t.truthy(result.versions.yarn.notfound);
+  t.is(result.versions.yarn.version, undefined);
+
   t.truthy(result.versions.node);
   t.is(result.versions.node.version.raw, nodeCurrent);
   t.is(result.versions.node.wanted.range, nodeCurrent);
-  t.is(result.versions.node.isSatisfied, true);
-  t.is(result.isSatisfied, true);
-  t.is(result.versions.yarn.version, undefined);
-  t.truthy(result.versions.yarn.notfound);
 });
 
 crossTest("negative node result, yarn not installed", current, { node: nodeLTS }, (t, err, result) => {
   t.falsy(err);
+  t.false(result.isSatisfied);
+  t.false(result.versions.node.isSatisfied);
+
+  t.truthy(result.versions.yarn.notfound);
+  t.is(result.versions.yarn.version, undefined);
+
   t.truthy(result.versions.node);
   t.is(result.versions.node.version.raw, nodeCurrent);
   t.is(result.versions.node.wanted.range, nodeLTS);
-  t.is(result.versions.node.isSatisfied, false);
-  t.is(result.versions.yarn.version, undefined);
-  t.truthy(result.versions.yarn.notfound);
-  t.is(result.isSatisfied, false);
 });
 
 crossTest("negative yarn result, yarn not installed", current, { yarn: yarnCurrent }, (t, err, result) => {
   t.falsy(err);
+  t.false(result.isSatisfied);
+
   t.is(result.versions.yarn.version, undefined);
   t.is(result.versions.yarn.wanted.range, yarnCurrent);
-  t.is(result.isSatisfied, false);
 });
