@@ -11,10 +11,16 @@ const semver = require("semver");
 
 const runningOnWindows = (process.platform === "win32");
 
-const pathSeperator = runningOnWindows ? ";" : ":";
 const originalPath = process.env.PATH;
+
+const pathSeparator = runningOnWindows ? ";" : ":";
+const localBinPath = path.resolve("node_modules/.bin")
 // ignore locally installed packages
-const globalPath = originalPath.replace(new RegExp(path.join(process.cwd(), "node_modules/.bin").replace(/\\/g, '\\\\') + pathSeperator, 'g'), "");
+const globalPath = originalPath
+  .split(pathSeparator)
+  .filter(p => path.resolve(p)!==localBinPath)
+  .join(pathSeparator)
+;
 
 
 const PROGRAMS = {
