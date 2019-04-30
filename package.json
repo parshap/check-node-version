@@ -9,14 +9,9 @@
   "bin": {
     "check-node-version": "bin.js"
   },
-  "files": [
-    "bin.js",
-    "index.d.ts",
-    "usage.txt"
-  ],
   "scripts": {
     "add-docs": "git add README.md",
-    "build-readme": "gitdown ./README.src.md --output-file ./README.md",
+    "build-readme": "gitdown ./README_src.md --output-file ./README.md",
     "test": "ava test.js"
   },
   "husky": {
