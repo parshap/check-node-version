@@ -1,6 +1,6 @@
 "use strict";
 
-const { exec } = require("child_process");
+const { exec, execSync } = require("child_process");
 const path = require("path");
 
 const filterObject = require("object-filter");
@@ -27,7 +27,18 @@ const PROGRAMS = {
   node: {
     getVersion: runVersionCommand.bind(null, "node --version"),
     getInstallInstructions(v) {
-      return `To install node, run \`nvm install ${v}\` or see https://nodejs.org/`;
+      try {
+        // check for existance of nvm
+        execSync(
+          'nvm',
+          { stdio:[] } // don't care about output
+        );
+      } catch (e) {
+        // no nvm,
+        return `To install node, see https://nodejs.org/download/release/v${v}/`;
+      }
+
+      return `To install node, run \`nvm install ${v}\``;
     }
   },
   npm: {
@@ -45,7 +56,7 @@ const PROGRAMS = {
   yarn: {
     getVersion: runVersionCommand.bind(null, "yarn --version"),
     getInstallInstructions(v) {
-      return "To install yarn, see https://yarnpkg.com/lang/en/docs/install/";
+      return `To install yarn, see https://github.com/yarnpkg/yarn/releases/tag/v${v}`;
     }
   },
 };

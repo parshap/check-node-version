@@ -16,8 +16,8 @@ function abort () {
 		'You are using node version ' + currentVersion.join('.') + '.\n\n' +
 		'check-node-version supports node verion ' + minVersion.join('.') + ' and newer.\n\n' +
 		'Please do one of the following:\n' +
-		'1. update your version of node\n' +
-		'2. downgrade to version 2 of check-node-version\n\n' +
+		'  1. update your version of node\n' +
+		'  2. downgrade to version 3.3.0 of check-node-version\n\n' +
 		'We are sorry for the inconvenience.' +
 		'\n'
 	);
