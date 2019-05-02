@@ -1,6 +1,6 @@
 "use strict";
 
-const { exec, execSync } = require("child_process");
+const { exec } = require("child_process");
 const path = require("path");
 
 const filterObject = require("object-filter");
@@ -8,6 +8,7 @@ const mapValues = require("map-values");
 const parallel = require("run-parallel");
 const semver = require("semver");
 
+const tools = require('./tools');
 
 const runningOnWindows = (process.platform === "win32");
 
@@ -23,53 +24,15 @@ const globalPath = originalPath
 ;
 
 
-const PROGRAMS = {
-  node: {
-    getVersion: runVersionCommand.bind(null, "node --version"),
-    getInstallInstructions(v) {
-      try {
-        // check for existance of nvm
-        execSync(
-          'nvm',
-          { stdio:[] } // don't care about output
-        );
-      } catch (e) {
-        // no nvm,
-        return `To install node, see https://nodejs.org/download/release/v${v}/`;
-      }
-
-      return `To install node, run \`nvm install ${v}\``;
-    }
-  },
-  npm: {
-    getVersion: runVersionCommand.bind(null, "npm --version"),
-    getInstallInstructions(v) {
-      return `To install npm, run \`npm install -g npm@${v}\``;
-    }
-  },
-  npx: {
-    getVersion: runVersionCommand.bind(null, "npx --version"),
-    getInstallInstructions(v) {
-      return `To install npx, run \`npm install -g npx@${v}\``;
-    }
-  },
-  yarn: {
-    getVersion: runVersionCommand.bind(null, "yarn --version"),
-    getInstallInstructions(v) {
-      return `To install yarn, see https://github.com/yarnpkg/yarn/releases/tag/v${v}`;
-    }
-  },
-};
-
-
 function runVersionCommand(command, callback) {
   process.env.PATH = globalPath;
+
   exec(command, (execError, stdout, stderr) => {
     const commandDescription = JSON.stringify(command);
 
     if (!execError) {
       return callback(null, {
-        version: stdout.toString().split("\n")[0].trim(),
+        version: stdout,
       });
     }
 
@@ -94,13 +57,16 @@ function runVersionCommand(command, callback) {
 
     return callback(new Error(errorMessage));
   });
+
   process.env.PATH = originalPath;
 }
 
 // Return object containing only keys that a program exists for and
 // something valid was given.
 function normalizeWanted(wanted) {
-  wanted = wanted || {};
+  if (!wanted) {
+    return {};
+  }
 
   // Validate keys
   wanted = filterObject(wanted, Boolean);
@@ -109,9 +75,7 @@ function normalizeWanted(wanted) {
   wanted = mapValues(wanted, String);
 
   // Filter existing programs
-  wanted = filterObject(wanted, (_, key) => {
-    return PROGRAMS[key];
-  });
+  wanted = filterObject(wanted, (_, key) => tools[key]);
 
   return wanted;
 }
@@ -125,7 +89,14 @@ module.exports = function check(wanted, callback) {
 
   wanted = normalizeWanted(wanted);
 
-  const commands = mapValues(PROGRAMS, ({ getVersion }) => ( getVersion ));
+  const commands = mapValues(
+    (
+      Object.keys(wanted).length
+      ? filterObject(tools, (_, key) => wanted[key])
+      : tools
+    ),
+    ({ getVersion }) => ( runVersionCommand.bind(null, getVersion) )
+  );
 
   parallel(commands, (err, versionsResult) => {
     if (err) {
@@ -133,7 +104,7 @@ module.exports = function check(wanted, callback) {
       return;
     }
 
-    const versions = mapValues(PROGRAMS, (_, name) => {
+    const versions = mapValues(versionsResult, (_, name) => {
       const programInfo = {
         isSatisfied: true,
       };
@@ -163,5 +134,3 @@ module.exports = function check(wanted, callback) {
     });
   });
 };
-
-module.exports.PROGRAMS = PROGRAMS;

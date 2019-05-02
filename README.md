@@ -108,21 +108,20 @@ $ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
 <a name="check-node-version-command-line-usage-examples-print-installed-versions"></a>
 #### Print installed versions
 
-Use the `--print` option to print all currently installed versions.
+Use the `--print` option to print currently installed versions.
+If given a tool to check, only that will be printed.
+Otherwise, all known tools will be printed.
+Notes a missing tool.
 
 ```bash
-$ check-node-version --print
+$ check-node-version --print --node 11.12
 node: 11.12.0
-npm: 6.9.0
-npx: 10.2.0
-yarn: 1.13.0
 $ echo $?
 0
 ```
 
-Even with a missing binary, if the checks run, all is good.
 ```powershell
-$ check-node-version --print --node 11.12
+$ check-node-version --print
 node: 11.12.0
 npm: 6.9.0
 npx: 10.2.0

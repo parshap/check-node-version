@@ -36,7 +36,7 @@ function from(version) {
  * @callback AssertionsCallback
  *
  * @param {Object} t - https://github.com/avajs/ava/blob/master/docs/02-execution-context.md
- * @param {?Error} error - any error that occurs during version query other than the app not being installed
+ * @param {?Error} error - any error that occurs during version query other than the tool not being installed
  * @param {Results} result - data on the wanted and installed versions
  */
 /**
@@ -63,7 +63,7 @@ function crossTest(label, installed, wanted, assertions) {
   }
 
   const callback = (t, err, result) => {
-    assertions(t, err, result);
+    assertions(t, err, result, {installed, wanted});
     t.end();
   }
 
@@ -80,18 +80,18 @@ function mockCheck(platform, versions) {
   Object.defineProperty(process, "platform", { value: platform })
 
   try {
-    return proxyquire(".", {
+    return proxyquire("..", {
       "child_process": {
         exec(command, callback) {
-          const app = command.split("--version")[0].trim();
-          const version = versions[app];
+          const tool = command.split("--version")[0].trim();
+          const version = versions[tool];
 
           let stderr = "";
           let execError = null;
 
           if (!version) {
-            stderr = notFoundMessage(platform, app);
-            execError = new NotFoundError(platform, app);
+            stderr = notFoundMessage(platform, tool);
+            execError = new NotFoundError(platform, tool);
           }
 
           callback(execError, version || "", stderr);
@@ -103,29 +103,29 @@ function mockCheck(platform, versions) {
   }
 }
 
-function NotFoundError(platform, app) {
+function NotFoundError(platform, tool) {
   switch (platform) {
-    case NIX: return new NotFoundErrorNix(app);
-    case WIN: return new NotFoundErrorWin(app);
+    case NIX: return new NotFoundErrorNix(tool);
+    case WIN: return new NotFoundErrorWin(tool);
   }
 }
 
-function notFoundMessage(platform, app) {
+function notFoundMessage(platform, tool) {
   switch (platform) {
-    case NIX: return app + ": not found";
-    case WIN: return app + ` : The term '${app}' is not recognized`;
+    case NIX: return tool + ": not found";
+    case WIN: return tool + ` : The term '${tool}' is not recognized`;
   }
 }
 
-function NotFoundErrorNix(app) {
-  const error = new Error(notFoundMessage(NIX, app));
+function NotFoundErrorNix(tool) {
+  const error = new Error(notFoundMessage(NIX, tool));
   error.code = 127;
 
   return error;
 }
 
-function NotFoundErrorWin(app) {
-  const error = new Error(notFoundMessage(WIN, app));
+function NotFoundErrorWin(tool) {
+  const error = new Error(notFoundMessage(WIN, tool));
   error.code = 1;
 
   return error;

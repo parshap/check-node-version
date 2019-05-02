@@ -8,7 +8,7 @@ const chalk = require("chalk");
 const minimist = require("minimist");
 
 const check = require(".");
-const { PROGRAMS } = require(".");
+const tools = require("./tools");
 
 const argv = minimist(process.argv.slice(2), {
   alias: {
@@ -53,10 +53,10 @@ check(options, (err, result) => {
 
 
 function optionsFromCommandLine() {
-  return Object.keys(PROGRAMS).reduce((memo, name) => ({
-  ...memo,
-  [name]: argv[name],
-}), {});
+  return Object.keys(tools).reduce((memo, name) => ({
+    ...memo,
+    [name]: argv[name],
+  }), {});
 }
 
 function optionsFromPackage() {
@@ -78,7 +78,7 @@ function optionsFromPackage() {
     process.exit(1);
   }
 
-  return Object.keys(PROGRAMS).reduce((memo, name) => ({
+  return Object.keys(tools).reduce((memo, name) => ({
     ...memo,
     [name]: packageJson.engines[name],
   }), {});
@@ -88,40 +88,45 @@ function optionsFromPackage() {
 //
 
 
-function printInstalledVersion(name, info) {
-  if (info.version) {
-    console.log(name + ": " + chalk.bold(info.version));
-  }
-
-  if (info.notfound) {
-    if (info.isSatisfied) {
-      console.log(chalk.gray(name + ': not installed'));
-    } else {
-      console.error(chalk.yellow.bold(name + ': not installed'));
-    }
-  }
-}
-
 function printVersions(result, print) {
-  Object.keys(PROGRAMS).forEach(name => {
+  Object.keys(result.versions).forEach(name => {
     const info = result.versions[name];
     const isSatisfied = info.isSatisfied;
 
-    // report installed version
+    // print installed version
     if (print || !isSatisfied) {
       printInstalledVersion(name, info);
-  }
+    }
 
-    // display any non-compliant versions
+    // report any non-compliant versions
     if (!isSatisfied) {
       const raw = info.wanted.raw;
       const version = raw.replace(/[^.\d]/g, '');
 
       const range = info.wanted.range;
 
-      console.error(chalk.red.bold(`Error: Wanted ${name} version ${raw} (${range})`));
+      console.error(chalk.red(`Wanted ${name} version ` + chalk.bold(`${raw} (${range})`)));
 
-      console.log(chalk.red.bold(PROGRAMS[name].getInstallInstructions(version)));
+      console.log(chalk.yellow.bold(tools[name].getInstallInstructions(version)));
     }
-});
+  });
+}
+
+function printInstalledVersion(name, info) {
+  if (info.version) {
+    const versionNote = name + ": " + chalk.bold(info.version);
+    if (info.isSatisfied) {
+      console.log(versionNote);
+    } else {
+      console.log(chalk.red(versionNote));
+    }
+  }
+
+  if (info.notfound) {
+    if (info.isSatisfied) {
+      console.log(chalk.gray(name + ': not installed'));
+    } else {
+      console.error(chalk.red(name + ': not installed'));
+    }
+  }
 }

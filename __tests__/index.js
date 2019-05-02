@@ -2,26 +2,26 @@
 
 const test = require("ava").cb;
 
-const check = require(".");
+const check = require("..");
 
 const {
   nodeCurrent, nodeLTS, nodeOld,
   npmCurrent, npmLTS, npmLatest, npmOld,
   npxCurrent, npxLTS, npxLatest, npxOld,
   yarnCurrent,
-} = require("./test-versions");
+} = require("./_versions");
 
 const {
   current, latest, lts,
   old, npx, yarn,
-} = require("./test-setups");
+} = require("./_setups");
 
 const {
   crossTest,
 
   after,
   from,
-} = require("./test-helpers");
+} = require("./_helpers");
 
 
 test("global versions only", t => {
@@ -34,8 +34,41 @@ test("global versions only", t => {
   });
 });
 
+{
+  const successSteps = [current];
+  const failureSteps = [old];
 
-crossTest("simple call", [current, latest, lts, old, npx, yarn], {}, (t, err, result) => {
+  Object.entries(yarn).forEach(([k,v]) => {
+    successSteps.push({[k]:v});
+    failureSteps.push({[k]:after(v)});
+  });
+
+  crossTest("check exactly requested tools", yarn, successSteps, (t, err, result, {wanted}) => {
+    t.falsy(err);
+    t.true(result.isSatisfied);
+
+    t.is(
+      Object.keys(wanted).toString(),
+      Object.keys(result.versions).toString(),
+    );
+
+    t.true(Object.values(result.versions)[0].isSatisfied);
+  });
+
+  crossTest("check exactly requested tools, failure", yarn, failureSteps, (t, err, result, {wanted}) => {
+    t.falsy(err);
+    t.false(result.isSatisfied);
+
+    t.is(
+      Object.keys(wanted).toString(),
+      Object.keys(result.versions).toString(),
+    );
+
+    t.false(Object.values(result.versions)[0].isSatisfied);
+  });
+}
+
+crossTest("check all tools if none is requested", [current, latest, lts, old, npx, yarn], {}, (t, err, result) => {
   t.falsy(err);
   t.truthy(result.versions.node);
   t.truthy(result.versions.npm);
@@ -79,35 +112,13 @@ crossTest("negative node result", old, [
   t.is(result.versions.node.version.raw, nodeOld);
 });
 
-crossTest("positive node result, yarn not installed", current, { node: nodeCurrent }, (t, err, result) => {
-  t.falsy(err);
-  t.true(result.isSatisfied);
-  t.true(result.versions.node.isSatisfied);
 
-  t.truthy(result.versions.yarn.notfound);
-  t.is(result.versions.yarn.version, undefined);
-
-  t.truthy(result.versions.node);
-  t.is(result.versions.node.version.raw, nodeCurrent);
-  t.is(result.versions.node.wanted.range, nodeCurrent);
-});
-
-crossTest("negative node result, yarn not installed", current, { node: nodeLTS }, (t, err, result) => {
+crossTest("tool not installed", current, { yarn: yarnCurrent }, (t, err, result) => {
   t.falsy(err);
   t.false(result.isSatisfied);
-  t.false(result.versions.node.isSatisfied);
+  t.false(result.versions.yarn.isSatisfied);
 
-  t.truthy(result.versions.yarn.notfound);
-  t.is(result.versions.yarn.version, undefined);
-
-  t.truthy(result.versions.node);
-  t.is(result.versions.node.version.raw, nodeCurrent);
-  t.is(result.versions.node.wanted.range, nodeLTS);
-});
-
-crossTest("negative yarn result, yarn not installed", current, { yarn: yarnCurrent }, (t, err, result) => {
-  t.falsy(err);
-  t.false(result.isSatisfied);
+  t.true(result.versions.yarn.notfound);
 
   t.is(result.versions.yarn.version, undefined);
   t.is(result.versions.yarn.wanted.range, yarnCurrent);

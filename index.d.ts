@@ -68,14 +68,14 @@ interface SatisfiedVersionInfo {
  */
 interface UnsatisfiedVersionInfo {
     /**
-     * Whether the program version was unable to be found.
-     */
-    notfound?: boolean;
-
-    /**
      * Whether the version was known to satisfy its requirements (false).
      */
     isSatisfied: false;
+
+    /**
+     * Whether the program version was unable to be found.
+     */
+    notfound?: boolean;
 
     /**
      * Retrieved version, if available.

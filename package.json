@@ -12,7 +12,7 @@
   "scripts": {
     "add-docs": "git add README.md",
     "build-readme": "gitdown ./README_src.md --output-file ./README.md",
-    "test": "ava test.js"
+    "test": "ava"
   },
   "husky": {
     "hooks": {

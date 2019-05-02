@@ -3,7 +3,7 @@ const {
   npmCurrent, npmLTS, npmLatest, npmOld,
   npxCurrent, npxLTS, npxLatest, npxOld,
   yarnCurrent,
-} = require("./test-versions");
+} = require("./_versions");
 
 exports.current = {
   node: nodeCurrent,

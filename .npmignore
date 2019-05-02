@@ -1,4 +1,4 @@
 node_modules
+__tests__
 *.yml
-test*
 README_src.md
