@@ -5,18 +5,11 @@ module.exports = {
   node: {
     getVersion: "node --version",
     getInstallInstructions(v) {
-     try {
-      // check for existance of nvm
-      execSync(
-        'nvm',
-        { stdio:[] } // don't care about output
-      );
-     } catch (e) {
-      // no nvm,
-      return `To install node, see https://nodejs.org/download/release/v${fq(v)}/`;
-     }
+      if (hasNvm()) {
+        return `To install node, run \`nvm install ${v}\``;
+      }
 
-     return `To install node, run \`nvm install ${v}\``;
+      return `To install node, see https://nodejs.org/download/release/v${fq(v)}/`;
     }
   },
   npm: {
@@ -42,4 +35,19 @@ module.exports = {
 // fully qualified version string (1 -> 1.0.0)
 function fq(v) {
   return normalizeVersion(v).join('.');
+}
+
+function hasNvm() {
+  try {
+   // check for existance of nvm
+   execSync(
+     'nvm',
+     { stdio:[] } // don't care about output
+   );
+  } catch (e) {
+   // no nvm,
+   return false;
+  }
+
+  return true;
 }
