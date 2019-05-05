@@ -1,4 +1,3 @@
-const normalizeVersion = require('./normalize-version');
 const { execSync } = require("child_process");
 
 module.exports = {
@@ -9,7 +8,7 @@ module.exports = {
         return `To install node, run \`nvm install ${v}\``;
       }
 
-      return `To install node, see https://nodejs.org/download/release/v${fq(v)}/`;
+      return `To install node, see https://nodejs.org/download/release/v${v}/`;
     }
   },
   npm: {
@@ -27,15 +26,10 @@ module.exports = {
   yarn: {
     getVersion: "yarn --version",
     getInstallInstructions(v) {
-     return `To install yarn, see https://github.com/yarnpkg/yarn/releases/tag/v${fq(v)}`;
+     return `To install yarn, see https://github.com/yarnpkg/yarn/releases/tag/v${v}`;
     }
   },
 };
-
-// fully qualified version string (1 -> 1.0.0)
-function fq(v) {
-  return normalizeVersion(v).join('.');
-}
 
 function hasNvm() {
   try {

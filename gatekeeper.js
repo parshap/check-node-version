@@ -1,22 +1,13 @@
-var normalizeVersion = require('./normalize-version');
+var semver = require('semver');
 
-var currentVersion = normalizeVersion(process.version);
-var minVersion = normalizeVersion(require('./package.json').engines.node);
+var current = process.version;
+var supported = require('./package.json').engines.node;
 
-if (currentVersion[0] < minVersion[0]) abort();
-if (currentVersion[0] === minVersion[0]) {
-  if (currentVersion[1] < minVersion[1]) abort();
-  if (currentVersion[1] === minVersion[1]) {
-    if (currentVersion[2] < minVersion[2]) abort();
-  }
-}
-
-
-function abort () {
+if (!semver.satisfies(current, supported)) {
   console.error(
     '\n' +
-    'You are using node version ' + currentVersion.join('.') + '.\n\n' +
-    'check-node-version supports node verion ' + minVersion.join('.') + ' and newer.\n\n' +
+    'You are using node version ' + semver.valid(current) + '.\n\n' +
+    'check-node-version supports node verion ' + semver.valid(semver.minVersion(supported)) + ' and newer.\n\n' +
     'Please do one of the following:\n' +
     '  1. update your version of node\n' +
     '  2. downgrade to version 3.3.0 of check-node-version\n\n' +

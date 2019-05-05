@@ -6,9 +6,11 @@ const path = require("path");
 
 const chalk = require("chalk");
 const minimist = require("minimist");
+const semver = require('semver');
 
 const check = require(".");
 const tools = require("./tools");
+
 
 const argv = minimist(process.argv.slice(2), {
   alias: {
@@ -100,14 +102,16 @@ function printVersions(result, print) {
 
     // report any non-compliant versions
     if (!isSatisfied) {
-      const raw = info.wanted.raw;
-      const version = raw.replace(/[^.\d]/g, '');
-
-      const range = info.wanted.range;
+      const { raw, range } = info.wanted;
 
       console.error(chalk.red(`Wanted ${name} version ` + chalk.bold(`${raw} (${range})`)));
 
-      console.log(chalk.yellow.bold(tools[name].getInstallInstructions(version)));
+      console.log(chalk.yellow.bold(
+        tools[name]
+        .getInstallInstructions(
+          semver.minVersion(info.wanted)
+        )
+      ));
     }
   });
 }
