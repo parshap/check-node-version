@@ -1,13 +1,23 @@
 {
   "name": "check-node-version",
   "version": "3.3.0",
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "description": "Check installed versions of node and npm",
   "main": "index.js",
   "bin": {
     "check-node-version": "bin.js"
   },
   "scripts": {
-    "test": "tape test.js"
+    "add-docs": "git add README.md",
+    "build-readme": "gitdown ./README_src.md --output-file ./README.md",
+    "test": "ava"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx run-s test build-readme add-docs"
+    }
   },
   "repository": {
     "type": "git",
@@ -29,11 +39,15 @@
     "map-values": "^1.0.1",
     "minimist": "^1.2.0",
     "object-filter": "^1.0.2",
-    "object.assign": "^4.0.4",
     "run-parallel": "^1.1.4",
-    "semver": "^5.0.3"
+    "semver": "^5.7.0"
   },
   "devDependencies": {
-    "tape": "^4.2.2"
+    "ava": "^1.3.1",
+    "gitdown": "^2.5.7",
+    "husky": "^1.3.1",
+    "npm": "3.10.10",
+    "npm-run-all": "^4.1.5",
+    "proxyquire": "^2.1.0"
   }
 }
