@@ -1,5 +1,17 @@
 ## Releases
 
+### 4.0.0
+
+* **Breaking:** Drop support for node versions before 8.3.0
+* **Breaking:** Remove `options.getVersion` option from api (no
+  cli change)
+* Improve test suite
+* Make CLI treat versions arguments as strings
+* Fix message for missing binary of Windows
+* Check global versions only
+* Make instructions valid for version ranges
+* Only suggest using nvm if nvm is installed
+
 ### 3.3.0
 
 * Add NPX support
