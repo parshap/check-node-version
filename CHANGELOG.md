@@ -1,5 +1,9 @@
 ## Releases
 
+### 4.0.1
+
+* Fix CLI by restoring shebang to new bin file
+
 ### 4.0.0
 
 * **Breaking:** Drop support for node versions before 8.3.0
