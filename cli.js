@@ -99,19 +99,19 @@ function printVersions(result, print) {
       printInstalledVersion(name, info);
     }
 
+    if (isSatisfied) return;
+
     // report any non-compliant versions
-    if (!isSatisfied) {
-      const { raw, range } = info.wanted;
+    const { raw, range } = info.wanted;
 
-      console.error(chalk.red(`Wanted ${name} version ` + chalk.bold(`${raw} (${range})`)));
+    console.error(chalk.red(`Wanted ${name} version ` + chalk.bold(`${raw} (${range})`)));
 
-      console.log(chalk.yellow.bold(
-        tools[name]
-        .getInstallInstructions(
-          semver.minVersion(info.wanted)
-        )
-      ));
-    }
+    console.log(chalk.yellow.bold(
+      tools[name]
+      .getInstallInstructions(
+        semver.minVersion(info.wanted)
+      )
+    ));
   });
 }
 
