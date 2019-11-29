@@ -1,5 +1,9 @@
 ## Releases
 
+### 4.0.2
+
+* Make notfound-catch locale-independent on Windows
+
 ### 4.0.1
 
 * Fix CLI by restoring shebang to new bin file
