@@ -8,12 +8,12 @@ const {
   nodeCurrent, nodeLTS, nodeOld,
   npmCurrent, npmLTS, npmLatest, npmOld,
   npxCurrent, npxLTS, npxLatest, npxOld,
-  yarnCurrent,
+  yarnCurrent, yarnInvalid,
 } = require("./_versions");
 
 const {
   current, latest, lts,
-  old, npx, yarn,
+  old, npx, yarn, invalid,
 } = require("./_setups");
 
 const {
@@ -122,4 +122,24 @@ crossTest("tool not installed", current, { yarn: yarnCurrent }, (t, err, result)
 
   t.is(result.versions.yarn.version, undefined);
   t.is(result.versions.yarn.wanted.range, yarnCurrent);
+});
+
+crossTest("non-semver version string, required", invalid, { yarn: yarnCurrent }, (t, err, result) => {
+  t.falsy(err);
+  t.false(result.isSatisfied);
+  t.false(result.versions.yarn.isSatisfied);
+
+  t.true(result.versions.yarn.invalid);
+
+  t.is(result.versions.yarn.version, undefined);
+});
+
+crossTest("non-semver version string, not required", invalid, {}, (t, err, result) => {
+  t.falsy(err);
+  t.true(result.isSatisfied);
+  t.true(result.versions.yarn.isSatisfied);
+
+  t.true(result.versions.yarn.invalid);
+
+  t.is(result.versions.yarn.version, undefined);
 });

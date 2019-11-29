@@ -71,10 +71,10 @@ $ echo $?
 
 ```powershell
 $ check-node-version --print
+yarn: not found
 node: 11.12.0
 npm: 6.9.0
 npx: 10.2.0
-yarn: not installed
 $ $LASTEXITCODE
 0
 ```
@@ -82,6 +82,19 @@ $ $LASTEXITCODE
 > **NOTE:**
 > Both preceding examples show that this works equally cross-platform,
 > the first one being a *nix shell, the second one running on Windows.
+
+> **NOTE:**
+> As per [Issue 36](https://github.com/parshap/check-node-version/issues/36),
+> non-semver-compliant versions (looking at yarn here) will be handled similarly to missing tools,
+> just with a different error message.
+>
+> At the time of writing, we think that
+> 1. all tools should always use semver
+> 2. exceptions are bound too be very rare
+> 3. preventing a crash is sufficient
+>
+> Consequently, we do not intend to support non-compliant versions to any further extent.
+
 
 #### Use with a `.nvmrc` file
 
