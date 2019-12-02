@@ -60,8 +60,11 @@ function runForWindows(options) {
   // Plus, in order to be absolutely certain, the error message of `where` would still need evaluation.
 
   exec("chcp", (error, stdout) => {
+    const finalCallback = options.callback;
+
     if (error) {
-      throw error;
+      finalCallback(chcpError(error, 1));
+      return;
     }
 
     const codepage = stdout.match(/\d+/)[0];
@@ -72,11 +75,52 @@ function runForWindows(options) {
     }
 
     // reset codepage before exiting
-    const finalCallback = options.callback;
-    options.callback = (...args) => exec(`chcp ${codepage}`, () => finalCallback(...args));
+    options.callback = (...args) => exec(`chcp ${codepage}`, (error) => {
+      if (error) {
+        finalCallback(chcpError(error, 3));
+        return;
+      }
+
+      finalCallback(...args);
+    });
 
     // switch to Unicode
-    exec("chcp 65001", () => run(options));
+    exec("chcp 65001", (error) => {
+      if (error) {
+        finalCallback(chcpError(error, 2));
+        return;
+      }
+
+      run(options);
+    });
+
+    function chcpError(error, step) {
+      switch (step) {
+        case 1:
+          error.message = `[CHCP] error while getting current codepage:\n${error.message}`;
+        break;
+
+        case 2:
+          error.message = `[CHCP] error while switching to Unicode codepage:\n${error.message}`;
+        break;
+
+        case 3:
+          error.message = `
+            [CHCP] error while resetting current codepage:
+            ${error.message}
+
+            Please note that your terminal is now using the Unicode codepage.
+            Therefore, codepage-dependent actions may work in an unusual manner.
+            You can run \`chcp ${codepage}\` yourself in order to reset your codepage,
+            or just close this terminal and work in another.
+          `.trim().replace(/^ +/gm,'') // strip indentation
+        break;
+
+        // no default
+      }
+
+      return error
+    }
   });
 }
 
