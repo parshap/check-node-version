@@ -1,8 +1,8 @@
 <a name="check-node-version"></a>
 # check-node-version
 [![NPM version](http://img.shields.io/npm/v/check-node-version.svg?style=flat-square)](https://www.npmjs.org/package/check-node-version)
-[![AppVeyor build status](https://img.shields.io/appveyor/ci/parshap/check-node-version/master.svg?style=flat-square)](https://ci.appveyor.com/project/parshap/check-node-version/branch/master)
-[![Travis build status](http://img.shields.io/travis/parshap/check-node-version/master.svg?style=flat-square)](https://travis-ci.org/parshap/check-node-version)
+[![AppVeyor build status](https://img.shields.io/appveyor/ci/rasenplanscher/check-node-version/master.svg?style=flat-square)](https://ci.appveyor.com/project/rasenplanscher/check-node-version/branch/master)
+[![Travis build status](http://img.shields.io/travis/rasenplanscher/check-node-version/master.svg?style=flat-square)](https://travis-ci.org/rasenplanscher/check-node-version)
 
 Check installed versions of `node`, `npm`, `npx`, and `yarn`.
 
@@ -167,21 +167,21 @@ const check = require("check-node-version");
 
 check(
     { node: ">= 18.3", },
-    (error, results) => {
+    (error, result) => {
         if (error) {
             console.error(error);
             return;
         }
 
-        if (results.isSatisfied) {
+        if (result.isSatisfied) {
             console.log("All is well.");
             return;
         }
 
         console.error("Some package version(s) failed!");
 
-        for (const packageName of Object.keys(results.versions)) {
-            if (!results.versions[packageName].isSatisfied) {
+        for (const packageName of Object.keys(result.versions)) {
+            if (!result.versions[packageName].isSatisfied) {
                 console.error(`Missing ${packageName}.`);
             }
         }

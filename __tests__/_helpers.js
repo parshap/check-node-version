@@ -76,6 +76,7 @@ function crossTest(label, installed, wanted, assertions) {
   });
 }
 
+const chcpRegex = /^chcp\b/;
 function mockCheck(platform, versions) {
   Object.defineProperty(process, "platform", { value: platform })
 
@@ -83,6 +84,11 @@ function mockCheck(platform, versions) {
     return proxyquire("..", {
       "child_process": {
         exec(command, callback) {
+          if (chcpRegex.test(command)) {
+            callback(null, "Active code page: 65001", "");
+            return;
+          }
+
           const tool = command.split("--version")[0].trim();
           const version = versions[tool];
 
