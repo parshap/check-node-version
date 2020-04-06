@@ -78,6 +78,11 @@ interface UnsatisfiedVersionInfo {
     notfound?: boolean;
 
     /**
+     * Whether the program version string is non-compliant with semver.
+     */
+    invalid?: boolean;
+
+    /**
      * Retrieved version, if available.
      */
     version?: string;

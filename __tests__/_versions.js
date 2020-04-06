@@ -14,4 +14,5 @@ module.exports = {
   npxOld: "9.2.0", // crazy, I know ¯\_(ツ)_/¯
 
   yarnCurrent: "1.15.2",
+  yarnInvalid: "0.32+git",
 };

@@ -1,8 +1,8 @@
 <a name="check-node-version"></a>
 # check-node-version
 [![NPM version](http://img.shields.io/npm/v/check-node-version.svg?style=flat-square)](https://www.npmjs.org/package/check-node-version)
-[![AppVeyor build status](https://img.shields.io/appveyor/ci/parshap/check-node-version/master.svg?style=flat-square)](https://ci.appveyor.com/project/parshap/check-node-version/branch/master)
-[![Travis build status](http://img.shields.io/travis/parshap/check-node-version/master.svg?style=flat-square)](https://travis-ci.org/parshap/check-node-version)
+[![AppVeyor build status](https://img.shields.io/appveyor/ci/rasenplanscher/check-node-version/issue-36.svg?style=flat-square)](https://ci.appveyor.com/project/rasenplanscher/check-node-version/branch/issue-36)
+[![Travis build status](http://img.shields.io/travis/rasenplanscher/check-node-version/issue-36.svg?style=flat-square)](https://travis-ci.org/rasenplanscher/check-node-version)
 
 Check installed versions of `node`, `npm`, `npx`, and `yarn`.
 
@@ -122,10 +122,10 @@ $ echo $?
 
 ```powershell
 $ check-node-version --print
+yarn: not found
 node: 11.12.0
 npm: 6.9.0
 npx: 10.2.0
-yarn: not installed
 $ $LASTEXITCODE
 0
 ```
@@ -133,6 +133,19 @@ $ $LASTEXITCODE
 > **NOTE:**
 > Both preceding examples show that this works equally cross-platform,
 > the first one being a *nix shell, the second one running on Windows.
+
+> **NOTE:**
+> As per [Issue 36](https://github.com/parshap/check-node-version/issues/36),
+> non-semver-compliant versions (looking at yarn here) will be handled similarly to missing tools,
+> just with a different error message.
+>
+> At the time of writing, we think that
+> 1. all tools should always use semver
+> 2. exceptions are bound too be very rare
+> 3. preventing a crash is sufficient
+>
+> Consequently, we do not intend to support non-compliant versions to any further extent.
+
 
 <a name="check-node-version-command-line-usage-examples-use-with-a-nvmrc-file"></a>
 #### Use with a <code>.nvmrc</code> file

@@ -131,17 +131,21 @@ function run({ commands, callback, wanted }) {
       return;
     }
 
-    const versions = mapValues(versionsResult, (_, name) => {
+    const versions = mapValues(versionsResult, ({ version, notfound, invalid }, name) => {
       const programInfo = {
         isSatisfied: true,
       };
 
-      if (versionsResult[name].version) {
-        programInfo.version = semver(versionsResult[name].version);
+      if (version) {
+        programInfo.version = semver(version);
       }
 
-      if (versionsResult[name].notfound) {
-        programInfo.notfound = versionsResult[name].notfound;
+      if (invalid) {
+        programInfo.invalid = invalid;
+      }
+
+      if (notfound) {
+        programInfo.notfound = notfound;
       }
 
       if (wanted[name]) {
@@ -152,6 +156,7 @@ function run({ commands, callback, wanted }) {
           semver.satisfies(programInfo.version, programInfo.wanted)
         );
       }
+
       return programInfo;
     });
 
@@ -190,9 +195,17 @@ function runVersionCommand(command, callback) {
     const commandDescription = JSON.stringify(command);
 
     if (!execError) {
-      return callback(null, {
-        version: stdout,
-      });
+      const version = stdout.trim();
+
+      if (semver.valid(version)) {
+        return callback(null, {
+          version,
+        });
+      } else {
+        return callback(null, {
+          invalid: true,
+        })
+      }
     }
 
     if (toolNotFound(execError)) {

@@ -2,7 +2,7 @@ const {
   nodeCurrent, nodeLTS, nodeOld,
   npmCurrent, npmLTS, npmLatest, npmOld,
   npxCurrent, npxLTS, npxLatest, npxOld,
-  yarnCurrent,
+  yarnCurrent, yarnInvalid,
 } = require("./_versions");
 
 exports.current = {
@@ -31,10 +31,15 @@ exports.old = {
 
 exports.npx = {
   ...exports.old,
-  npx: npmLatest
+  npx: npmLatest,
 };
 
 exports.yarn = {
   ...exports.current,
-  yarn: yarnCurrent
+  yarn: yarnCurrent,
+};
+
+exports.invalid = {
+  ...exports.current,
+  yarn: yarnInvalid,
 };

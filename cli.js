@@ -115,21 +115,25 @@ function printVersions(result, print) {
   });
 }
 
-function printInstalledVersion(name, info) {
-  if (info.version) {
-    const versionNote = name + ": " + chalk.bold(info.version);
-    if (info.isSatisfied) {
-      console.log(versionNote);
-    } else {
-      console.log(chalk.red(versionNote));
-    }
+function printInstalledVersion(name, { version, isSatisfied, invalid, notfound }) {
+  let versionNote = "";
+
+  if (version) {
+    versionNote = name + ": " + chalk.bold(version);
   }
 
-  if (info.notfound) {
-    if (info.isSatisfied) {
-      console.log(chalk.gray(name + ': not installed'));
-    } else {
-      console.error(chalk.red(name + ': not installed'));
-    }
+  if (invalid) {
+    versionNote = name + ": " + chalk.bold("given version not semver-compliant");
+  }
+
+  if (notfound) {
+    versionNote = name + ": not found";
+  }
+
+  if (isSatisfied) {
+    if (version) console.log(versionNote);
+    else console.log(chalk.gray(versionNote));
+  } else {
+    console.log(chalk.red(versionNote));
   }
 }
