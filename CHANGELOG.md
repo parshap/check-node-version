@@ -1,5 +1,9 @@
 ## Releases
 
+### 4.0.3
+
+* Fix crash due to non-semver valid version strings
+
 ### 4.0.2
 
 * Make notfound-catch locale-independent on Windows
