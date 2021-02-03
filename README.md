@@ -108,6 +108,15 @@ at one time.
 $ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
 ```
 
+<a name="check-node-version-command-line-usage-examples-check-for-volta-pinned-versions"></a>
+#### Check for volta pinned versions
+
+You can check versions pinned by [Volta](https://volta.sh/):
+
+```bash
+$ check-node-version --volta
+```
+
 <a name="check-node-version-command-line-usage-examples-print-installed-versions"></a>
 #### Print installed versions
 
