@@ -2,7 +2,7 @@
 # check-node-version
 [![NPM version](http://img.shields.io/npm/v/check-node-version.svg?style=flat-square)](https://www.npmjs.org/package/check-node-version)
 [![AppVeyor build status](https://img.shields.io/appveyor/ci/parshap/check-node-version/master.svg?style=flat-square)](https://ci.appveyor.com/project/parshap/check-node-version/branch/master)
-[![Travis build status](http://img.shields.io/travis/parshap/check-node-version/master.svg?style=flat-square)](https://travis-ci.org/parshap/check-node-version)
+[![Travis build status](http://img.shields.io/travis/parshap/check-node-version/master.svg?style=flat-square)](https://travis-ci.org/samsaggace/check-node-version)
 
 Check installed versions of `node`, `npm`, `npx`, and `yarn`.
 
@@ -58,6 +58,9 @@ OPTIONS
       --package
             Use the "engines" key in the current package.json for the
             semver version ranges.
+      
+      --volta
+            Use the versions pinned by Volta in the package.json
 
       -p, --print
             Print installed versions.
@@ -103,6 +106,15 @@ at one time.
 
 ```bash
 $ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
+```
+
+<a name="check-node-version-command-line-usage-examples-check-for-volta-pinned-versions"></a>
+#### Check for volta pinned versions
+
+You can check versions pinned by [Volta](https://volta.sh/):
+
+```bash
+$ check-node-version --volta
 ```
 
 <a name="check-node-version-command-line-usage-examples-print-installed-versions"></a>

@@ -30,6 +30,9 @@ OPTIONS
       --package
             Use the "engines" key in the current package.json for the
             semver version ranges.
+      
+      --volta
+            Use the versions pinned by Volta in the package.json
 
       -p, --print
             Print installed versions.
