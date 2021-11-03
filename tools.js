@@ -32,7 +32,7 @@ module.exports = {
   pnpm: {
     getVersion: "pnpm --version",
     getInstallInstructions(v) {
-     return `To install npm, run \`npm install -g pnpm@${v}\``;
+     return `To install pnpm, run \`npm install -g pnpm@${v}\``;
     }
   },
 };
