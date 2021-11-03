@@ -29,6 +29,12 @@ module.exports = {
      return `To install yarn, see https://github.com/yarnpkg/yarn/releases/tag/v${v}`;
     }
   },
+  pnpm: {
+    getVersion: "pnpm --version",
+    getInstallInstructions(v) {
+     return `To install npm, run \`npm install -g pnpm@${v}\``;
+    }
+  },
 };
 
 function hasNvm() {

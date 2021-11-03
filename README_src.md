@@ -3,7 +3,7 @@
 {"gitdown": "badge", "name": "appveyor"}
 {"gitdown": "badge", "name": "travis"}
 
-Check installed versions of `node`, `npm`, `npx`, and `yarn`.
+Check installed versions of `node`, `npm`, `npx`, `yarn`, and `pnpm`.
 
 {"gitdown": "contents"}
 
@@ -48,11 +48,11 @@ $ echo $?
 
 #### Check for multiple versions simultaneously
 
-You can check versions of any combinations of `node`, `npm`, `npx`, and `yarn`
+You can check versions of any combinations of `node`, `npm`, `npx`, `yarn`, and `pnpm`
 at one time.
 
 ```bash
-$ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
+$ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1 --pnpm 6.20.1
 ```
 
 #### Check for volta pinned versions
@@ -127,7 +127,7 @@ $ check-node-version --node $(cat .nvmrc) --npm 2.14
 ## API Usage
 
 This module can also be used programmatically.
-Pass it an object with the required versions of `node`, `npm`, `npx`, and/or `yarn` followed by a results handler.
+Pass it an object with the required versions of `node`, `npm`, `npx`, `yarn` and/or `pnpm` followed by a results handler.
 
 ```javascript
 const check = require("check-node-version");

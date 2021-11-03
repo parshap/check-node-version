@@ -3,6 +3,7 @@ const {
   npmCurrent, npmLTS, npmLatest, npmOld,
   npxCurrent, npxLTS, npxLatest, npxOld,
   yarnCurrent, yarnInvalid,
+  pnpmCurrent,
 } = require("./_versions");
 
 exports.current = {
@@ -37,6 +38,11 @@ exports.npx = {
 exports.yarn = {
   ...exports.current,
   yarn: yarnCurrent,
+};
+
+exports.pnpm = {
+  ...exports.current,
+  pnpm: pnpmCurrent,
 };
 
 exports.invalid = {

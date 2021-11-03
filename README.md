@@ -1,11 +1,10 @@
 <a name="check-node-version"></a>
 # check-node-version
 [![NPM version](http://img.shields.io/npm/v/check-node-version.svg?style=flat-square)](https://www.npmjs.org/package/check-node-version)
-[![AppVeyor build status](https://img.shields.io/appveyor/ci/parshap/check-node-version/master.svg?style=flat-square)](https://ci.appveyor.com/project/parshap/check-node-version/branch/master)
-[![Travis build status](http://img.shields.io/travis/parshap/check-node-version/master.svg?style=flat-square)](https://travis-ci.org/samsaggace/check-node-version)
-[![npm](https://img.shields.io/npm/dt/check-node-version)](https://www.npmjs.com/package/check-node-version)
+[![AppVeyor build status](https://img.shields.io/appveyor/ci/parshap/check-node-version/pnpm.svg?style=flat-square)](https://ci.appveyor.com/project/parshap/check-node-version/branch/pnpm)
+[![Travis build status](http://img.shields.io/travis/parshap/check-node-version/pnpm.svg?style=flat-square)](https://travis-ci.org/parshap/check-node-version)
 
-Check installed versions of `node`, `npm`, `npx`, and `yarn`.
+Check installed versions of `node`, `npm`, `npx`, `yarn`, and `pnpm`.
 
 * [check-node-version](#check-node-version)
     * [Install](#check-node-version-install)
@@ -31,7 +30,7 @@ SYNOPSIS
       check-node-version [OPTIONS]
 
 DESCRIPTION
-      check-node-version will check if the current node, npm, npx and yarn
+      check-node-version will check if the current node, npm, npx, yarn and pnpm
       versions match the given semver version ranges.
 
       If the given version is not satisfied, information about
@@ -54,6 +53,10 @@ OPTIONS
 
       --yarn VERSION
             Check that the current yarn version matches the given semver
+            version range.
+ 
+      --pnpm VERSION
+            Check that the current pnpm version matches the given semver
             version range.
 
       --package
@@ -102,11 +105,11 @@ $ echo $?
 <a name="check-node-version-command-line-usage-examples-check-for-multiple-versions-simultaneously"></a>
 #### Check for multiple versions simultaneously
 
-You can check versions of any combinations of `node`, `npm`, `npx`, and `yarn`
+You can check versions of any combinations of `node`, `npm`, `npx`, `yarn`, and `pnpm`
 at one time.
 
 ```bash
-$ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1
+$ check-node-version --node 4 --npm 2.14 --npx 6 --yarn 0.17.1 --pnpm 6.20.1
 ```
 
 <a name="check-node-version-command-line-usage-examples-check-for-volta-pinned-versions"></a>
@@ -186,7 +189,7 @@ $ check-node-version --node $(cat .nvmrc) --npm 2.14
 ## API Usage
 
 This module can also be used programmatically.
-Pass it an object with the required versions of `node`, `npm`, `npx`, and/or `yarn` followed by a results handler.
+Pass it an object with the required versions of `node`, `npm`, `npx`, `yarn` and/or `pnpm` followed by a results handler.
 
 ```javascript
 const check = require("check-node-version");
