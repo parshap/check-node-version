@@ -15,4 +15,6 @@ module.exports = {
 
   yarnCurrent: "1.15.2",
   yarnInvalid: "0.32+git",
+
+  pnpmCurrent: "6.20.1",
 };

@@ -16,6 +16,11 @@ interface WantedVersions {
      * Required version of yarn.
      */
     yarn?: string;
+
+    /**
+     * Required version of pnpm.
+     */
+    pnpm?: string;
 }
 
 type OnGetVersion = (error: Error | null, info: VersionInfo) => void;

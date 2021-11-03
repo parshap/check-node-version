@@ -27,6 +27,7 @@ const argv = minimist(process.argv.slice(2), {
     "npm",
     "npx",
     "yarn",
+    "pnpm",
   ],
   unknown: function (arg) {
     console.error(`Unknown option: ${arg}`);

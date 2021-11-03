@@ -9,11 +9,12 @@ const {
   npmCurrent, npmLTS, npmLatest, npmOld,
   npxCurrent, npxLTS, npxLatest, npxOld,
   yarnCurrent, yarnInvalid,
+  pnpmCurrent,
 } = require("./_versions");
 
 const {
   current, latest, lts,
-  old, npx, yarn, invalid,
+  old, npx, yarn, pnpm, invalid,
 } = require("./_setups");
 
 const {
@@ -68,12 +69,13 @@ test("global versions only", t => {
   });
 }
 
-crossTest("check all tools if none is requested", [current, latest, lts, old, npx, yarn], {}, (t, err, result) => {
+crossTest("check all tools if none is requested", [current, latest, lts, old, npx, yarn, pnpm], {}, (t, err, result) => {
   t.falsy(err);
   t.truthy(result.versions.node);
   t.truthy(result.versions.npm);
   t.truthy(result.versions.npx);
   t.truthy(result.versions.yarn);
+  t.truthy(result.versions.pnpm);
   t.true(result.isSatisfied);
 });
 
@@ -113,15 +115,20 @@ crossTest("negative node result", old, [
 });
 
 
-crossTest("tool not installed", current, { yarn: yarnCurrent }, (t, err, result) => {
+crossTest("tool not installed", current, { yarn: yarnCurrent, pnpm: pnpmCurrent }, (t, err, result) => {
   t.falsy(err);
   t.false(result.isSatisfied);
   t.false(result.versions.yarn.isSatisfied);
+  t.false(result.versions.pnpm.isSatisfied);
 
   t.true(result.versions.yarn.notfound);
+  t.true(result.versions.pnpm.notfound);
 
   t.is(result.versions.yarn.version, undefined);
   t.is(result.versions.yarn.wanted.range, yarnCurrent);
+
+  t.is(result.versions.pnpm.version, undefined);
+  t.is(result.versions.pnpm.wanted.range, pnpmCurrent);
 });
 
 crossTest("non-semver version string, required", invalid, { yarn: yarnCurrent }, (t, err, result) => {
