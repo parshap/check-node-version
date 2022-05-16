@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/parshap/check-node-version#readme",
   "dependencies": {
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "map-values": "^1.0.1",
     "minimist": "^1.2.0",
     "object-filter": "^1.0.2",
